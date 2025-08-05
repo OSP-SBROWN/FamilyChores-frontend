@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+@import "tailwindcss";
+
+html,
+body {
+  font-family: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  background-color: white;
+}
+
+html.dark,
+body.dark {
+  background-color: #0a0a0a;
+  color: white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto Serif', ui-serif, Georgia, Cambria, serif;
+}
+
+/* Smooth transitions for drag and drop */
+.timezone-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timezone-item:hover {
+  transform: translateY(-2px);
+}
+
+.timezone-item.dragging {
+  transform: rotate(5deg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Material 3 style animations */
+.drop-zone-active {
+  background: linear-gradient(45deg, rgba(142, 202, 230, 0.1), rgba(33, 158, 188, 0.1));
+  border: 2px dashed #219ebc;
+}

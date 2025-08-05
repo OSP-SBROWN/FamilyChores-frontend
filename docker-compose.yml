@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: family_chores
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d family_chores"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  shared:
+    build: 
+      context: .
+      dockerfile: shared/Dockerfile
+    volumes:
+      - shared_dist:/app/dist
+    command: npm run dev
+
+  backend:
+    build: 
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    ports:
+      - "4001:4001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      shared:
+        condition: service_started
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/family_chores
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - PORT=4001
+    volumes:
+      - ./backend:/app
+      - shared_dist:/app/node_modules/@family-chores/shared
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile.dev
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+      - shared
+    environment:
+      - VITE_API_URL=http://backend:4001
+      - PORT=4000
+    volumes:
+      - ./frontend:/app
+      - shared_dist:/app/node_modules/@family-chores/shared
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 4000
+
+volumes:
+  postgres_data:
+  shared_dist:
