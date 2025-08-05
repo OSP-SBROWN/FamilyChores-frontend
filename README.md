@@ -26,6 +26,14 @@ Deploy to Vercel. Set your Neon connection string and any secrets in the Vercel 
 
 ---
 
+## Timezone API Service Update
+
+- The timezone management frontend now uses a relative API path (`/api`) to communicate with Vercel serverless functions.
+- This replaces the previous hardcoded `localhost:4001` backend, resolving network errors and blank screens.
+- No further configuration is needed for local or Vercel deployment—API calls will route correctly.
+
+---
+
 # Features
 
 - 🚀 Server-side rendering
