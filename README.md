@@ -2,9 +2,31 @@
 
 A modern, production-ready template for building full-stack React applications using React Router.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+---
 
-## Features
+## FamilyChores Vercel + Neon Setup
+
+This project now uses Vercel for hosting and Neon for the database. Backend API routes are implemented as Vercel serverless functions in the `/api` directory.
+
+### Key Changes
+
+- **API routes**: All backend logic is now in `/api` as Vercel serverless functions (see `api-integration-guide.md`).
+- **Database**: Prisma is configured to use Neon. Connection string is set via the `DATABASE_URL` environment variable in Vercel.
+- **Shared code**: Prisma client and validation utilities are in `/lib`. Type definitions are in `/types`.
+- **Prisma schema**: See `/prisma/schema.prisma` and seed scripts in `/prisma`.
+- **Old backend**: The legacy Express backend has been removed. All required code has been migrated.
+
+### Local Development
+
+Use `vercel dev` to run both frontend and API routes locally.
+
+### Deployment
+
+Deploy to Vercel. Set your Neon connection string and any secrets in the Vercel dashboard.
+
+---
+
+# Features
 
 - 🚀 Server-side rendering
 - ⚡️ Hot Module Replacement (HMR)
@@ -14,9 +36,9 @@ A modern, production-ready template for building full-stack React applications u
 - 🎉 TailwindCSS for styling
 - 📖 [React Router docs](https://reactrouter.com/)
 
-## Getting Started
+# Getting Started
 
-### Installation
+## Installation
 
 Install the dependencies:
 
@@ -24,7 +46,7 @@ Install the dependencies:
 npm install
 ```
 
-### Development
+## Development
 
 Start the development server with HMR:
 
@@ -78,10 +100,20 @@ Make sure to deploy the output of `npm run build`
 │   └── server/    # Server-side code
 ```
 
-## Styling
+# Styling
 
 This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
 
 ---
 
 Built with ❤️ using React Router.
+
+---
+
+## Migration Log
+
+- Migrated backend API routes to `/api` (Vercel serverless functions)
+- Moved Prisma client and validation to `/lib`
+- Moved type definitions to `/types`
+- Moved Prisma schema and seed scripts to `/prisma`
+- Removed legacy `old-backend` directory
