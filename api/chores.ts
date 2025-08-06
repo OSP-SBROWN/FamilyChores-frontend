@@ -1,53 +1,41 @@
 // Vercel API route for chores
 // Refactored from Express to Vercel serverless function
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import prisma from '../lib/prisma';
-import Joi from 'joi';
 
-const createChoreSchema = Joi.object({
-  name: Joi.string().min(1).required(),
-  description: Joi.string().optional(),
-  frequency: Joi.string().valid('daily', 'multiple_daily', 'weekdays_only', 'weekend', 'weekly', 'monthly', 'quarterly', 'twice_yearly', 'annually', 'ad_hoc').required(),
-  estimatedMinutes: Joi.number().min(1).optional(),
-  timezoneIds: Joi.array().items(Joi.string()).default([])
-});
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-const updateChoreSchema = Joi.object({
-  name: Joi.string().min(1).optional(),
-  description: Joi.string().optional(),
-  frequency: Joi.string().valid('daily', 'multiple_daily', 'weekdays_only', 'weekend', 'weekly', 'monthly', 'quarterly', 'twice_yearly', 'annually', 'ad_hoc').optional(),
-  estimatedMinutes: Joi.number().min(1).optional(),
-  timezoneIds: Joi.array().items(Joi.string()).optional()
-});
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method === 'GET') {
       // Get all chores
       const chores = await prisma.chore.findMany({
-        include: {
-          assignments: {
-            include: {
-              assignedTo: { select: { id: true, name: true } },
-              helper: { select: { id: true, name: true } }
-            },
-            orderBy: { scheduledDate: 'desc' },
-            take: 5
-          },
-          timezones: {
-            include: {
-              timezone: true
-            }
-          },
-          _count: {
-            select: { assignments: true }
-          }
-        },
         orderBy: { name: 'asc' }
       });
       return res.status(200).json({ success: true, data: chores, count: chores.length });
     }
-    // Add other methods (POST, PUT, DELETE) as needed
+    
+    if (req.method === 'POST') {
+      const { name, description, frequency, estimatedMinutes } = req.body;
+      const chore = await prisma.chore.create({
+        data: {
+          name,
+          description,
+          frequency,
+          estimatedMinutes,
+        },
+      });
+      return res.status(201).json({ success: true, data: chore });
+    }
+    
+    // Add other methods (PUT, DELETE) as needed
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   } catch (error) {
     console.error('Error in chores API:', error);
