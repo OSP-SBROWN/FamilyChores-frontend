@@ -1,16 +1,12 @@
-import tailwindcss from "@tailwindcss/vite";
+import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
-import react from '@vitejs/plugin-react';
+import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), tsconfigPaths()],
-  build: {
-    outDir: 'build',
-    rollupOptions: {
-      output: {
-        manualChunks: undefined
-      }
-    }
-  }
+  plugins: [
+    reactRouter(),
+    tailwindcss(),
+    tsconfigPaths(),
+  ],
 });

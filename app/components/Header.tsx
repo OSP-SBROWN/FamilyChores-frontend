@@ -17,7 +17,7 @@ import {
   Badge,
 } from '@heroui/react';
 import { Home, Clock, Users, Calendar, Settings, LogOut, ChevronDown, Heart, Menu } from 'lucide-react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router';
 
 interface HeaderProps {
   user?: {

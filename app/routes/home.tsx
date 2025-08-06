@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Card, CardBody, CardHeader, Button, Divider } from "@heroui/react";
 import { Clock, Users, Calendar, Settings, BarChart3, CheckSquare } from "lucide-react";
 import AppLayout from "../components/AppLayout";
