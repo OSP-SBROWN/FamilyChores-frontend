@@ -4,7 +4,7 @@
 html,
 body {
   font-family: 'Roboto', ui-sans-serif, system-ui, sans-serif;
-  background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fff7ed 100%);
+  background: linear-gradient(135deg, #219EBC 0%, #8ECAE6 25%, #FFB703 75%, #FB8500 100%);
   min-height: 100vh;
 }
 
@@ -21,43 +21,57 @@ h1, h2, h3, h4, h5, h6 {
 /* Enhanced animations for drag and drop */
 .timezone-item {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(142, 202, 230, 0.1) 100%);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(142, 202, 230, 0.3) 100%);
+  backdrop-filter: blur(20px);
   border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .timezone-item:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 25px 50px -12px rgba(33, 158, 188, 0.25), 0 15px 20px -5px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(142, 202, 230, 0.4) 100%);
 }
 
 .timezone-item.dragging {
   transform: rotate(3deg) scale(1.05);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(142, 202, 230, 0.2) 100%);
+  box-shadow: 0 35px 60px -12px rgba(33, 158, 188, 0.4);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 183, 3, 0.3) 100%);
 }
 
 /* Material 3 style animations */
 .drop-zone-active {
-  background: linear-gradient(45deg, rgba(142, 202, 230, 0.15), rgba(33, 158, 188, 0.15));
-  border: 2px dashed #219ebc;
+  background: linear-gradient(45deg, rgba(255, 183, 3, 0.25), rgba(251, 133, 0, 0.25));
+  border: 2px dashed #FFB703;
   border-radius: 16px;
+  animation: dropZonePulse 2s ease-in-out infinite;
+}
+
+@keyframes dropZonePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.8; }
 }
 
 /* Glassmorphism effects */
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(33, 158, 188, 0.2);
 }
 
 /* Beautiful gradient text effects */
 .gradient-text {
-  background: linear-gradient(135deg, #219ebc 0%, #8ecae6 50%, #ffb703 100%);
+  background: linear-gradient(135deg, #219ebc 0%, #8ecae6 30%, #ffb703 70%, #fb8500 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 /* Smooth page transitions */
@@ -78,12 +92,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Enhanced button hover effects */
 .btn-gradient {
-  background: linear-gradient(135deg, #219ebc 0%, #8ecae6 100%);
+  background: linear-gradient(135deg, #219ebc 0%, #8ecae6 50%, #ffb703 100%);
   transition: all 0.3s ease;
 }
 
 .btn-gradient:hover {
-  background: linear-gradient(135deg, #8ecae6 0%, #219ebc 100%);
+  background: linear-gradient(135deg, #ffb703 0%, #8ecae6 50%, #219ebc 100%);
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(33, 158, 188, 0.3);
 }
@@ -125,4 +139,36 @@ h1, h2, h3, h4, h5, h6 {
 
 .pulse-soft {
   animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Animation delay utilities */
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+/* Colorful gradient backgrounds for home page */
+@keyframes colorShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.bg-animated-gradient {
+  background: linear-gradient(-45deg, #219ebc, #8ecae6, #ffb703, #fb8500);
+  background-size: 400% 400%;
+  animation: colorShift 15s ease infinite;
+}
+
+/* Enhanced card hover effects */
+.card-hover-lift {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
