@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { HeroUIProvider } from "@heroui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Auth0ProviderWrapper from "./components/Auth0Provider";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -54,11 +55,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <HeroUIProvider>
-        <Outlet />
-      </HeroUIProvider>
-    </QueryClientProvider>
+    <Auth0ProviderWrapper>
+      <QueryClientProvider client={queryClient}>
+        <HeroUIProvider>
+          <Outlet />
+        </HeroUIProvider>
+      </QueryClientProvider>
+    </Auth0ProviderWrapper>
   );
 }
 

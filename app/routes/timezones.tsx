@@ -167,12 +167,6 @@ export default function TimezonesPage() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: undefined
-  };
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -280,7 +274,7 @@ export default function TimezonesPage() {
 
   if (isLoading) {
     return (
-      <AppLayout user={user}>
+      <AppLayout>
         <div className="min-h-screen flex justify-center items-center">
           <div className="text-center">
             <Spinner size="lg" className="text-primary-600" />
@@ -293,7 +287,7 @@ export default function TimezonesPage() {
 
   if (error) {
     return (
-      <AppLayout user={user}>
+      <AppLayout>
         <div className="min-h-screen flex justify-center items-center">
           <Card className="p-8 shadow-xl border-0 bg-white/90 backdrop-blur-sm border border-danger-200">
             <CardBody className="text-center">
@@ -310,7 +304,7 @@ export default function TimezonesPage() {
   }
 
   return (
-    <AppLayout user={user}>
+    <AppLayout>
       <div className="min-h-screen relative overflow-hidden">
       {/* Very subtle background shapes */}
       <div className="absolute inset-0 opacity-3">

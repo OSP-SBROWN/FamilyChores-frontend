@@ -18,18 +18,25 @@ import {
 } from '@heroui/react';
 import { Home, Clock, Users, Calendar, Settings, LogOut, ChevronDown, Heart, Menu } from 'lucide-react';
 import { Link as RouterLink, useLocation } from 'react-router';
+import { useAuth0 } from '@auth0/auth0-react';
 
-interface HeaderProps {
-  user?: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
-}
-
-export default function Header({ user = { name: "John Doe", email: "john@example.com" } }: HeaderProps) {
+export default function Header() {
+  const { user, logout, isLoading } = useAuth0();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const handleLogout = () => {
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin
+      }
+    });
+  };
+
+  // Guard against undefined user
+  if (!user) {
+    return null;
+  }
 
   const menuItems = [
     { name: "Home", href: "/", icon: Home, disabled: false },

@@ -4,14 +4,8 @@ import { Clock, Users, Calendar, Settings, BarChart3, CheckSquare } from "lucide
 import AppLayout from "../components/AppLayout";
 
 export default function Home() {
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: undefined
-  };
-
   return (
-    <AppLayout user={user}>
+    <AppLayout>
       <div className="relative overflow-hidden">
         {/* Very subtle background shapes */}
         <div className="absolute inset-0 opacity-3">
