@@ -1,22 +1,8 @@
 import React from 'react';
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle,
-  Link,
-  Button,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Avatar,
-  Badge,
-} from '@heroui/react';
-import { Home, Clock, Users, Calendar, Settings, LogOut, ChevronDown, Heart, Menu } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
+import { Separator } from './ui/separator';
+import { Home, Clock, Users, Calendar, Settings, LogOut, ChevronDown, Heart, Menu, User } from 'lucide-react';
 import { Link as RouterLink, useLocation } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -24,6 +10,7 @@ export default function Header() {
   const { user, logout, isLoading } = useAuth0();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
   const handleLogout = () => {
     logout({
@@ -47,32 +34,22 @@ export default function Header() {
   ];
 
   return (
-    <Navbar 
-      onMenuOpenChange={setIsMenuOpen}
-      isMenuOpen={isMenuOpen}
-      classNames={{
-        base: "bg-[#023047] shadow-xl border-b border-white/10",
-        wrapper: "px-4 sm:px-6",
-        content: "gap-4",
-        menu: "bg-[#023047] border-r border-white/10 pt-6 shadow-2xl",
-        menuItem: "text-white"
-      }}
-      maxWidth="full"
-      height="5rem"
-    >
-      {/* Mobile Menu Toggle and Brand */}
-      <NavbarContent className="flex-1">
-        <Button
-          isIconOnly
-          variant="light"
-          className="sm:hidden text-white hover:bg-white/10 p-2 transition-all duration-200"
-          onPress={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        >
-          <Menu className="w-6 h-6 text-white" />
-        </Button>
-        <NavbarBrand className="flex-1 justify-center sm:justify-start">
-          <div className="flex items-center gap-2 sm:gap-4">
+    <header className="bg-[#023047] shadow-xl border-b border-white/10 relative z-50">
+      <nav className="max-w-full mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+        
+        {/* Mobile Menu Toggle and Brand */}
+        <div className="flex items-center flex-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="sm:hidden text-white hover:bg-white/10 mr-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          >
+            <Menu className="w-6 h-6" />
+          </Button>
+          
+          <div className="flex items-center gap-2 sm:gap-4 flex-1 justify-center sm:justify-start">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
               <Heart className="w-5 h-5 sm:w-7 sm:h-7 text-white" fill="currentColor" />
             </div>
@@ -85,152 +62,181 @@ export default function Header() {
               </p>
             </div>
           </div>
-        </NavbarBrand>
-      </NavbarContent>
+        </div>
 
-      {/* Desktop Navigation */}
-      <NavbarContent className="hidden sm:flex gap-3" justify="center">
-        {menuItems.map((item) => (
-          <NavbarItem key={item.name} isActive={location.pathname === item.href}>
-            {item.disabled ? (
-              <Button
-                variant="light"
-                isDisabled
-                startContent={<item.icon className="w-5 h-5" />}
-                className="font-medium text-[#219EBC] cursor-not-allowed opacity-70 px-6 py-3"
-              >
-                {item.name}
-              </Button>
-            ) : (
-              <Link
-                as={RouterLink}
-                to={item.href}
-                className={`
-                  flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300
-                  ${location.pathname === item.href 
-                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg hover:shadow-xl scale-105" 
-                    : "text-white hover:text-orange-300 hover:bg-white/10 hover:scale-105"
-                  }
-                `}
-              >
-                <item.icon className="w-5 h-5" />
-                {item.name}
-              </Link>
-            )}
-          </NavbarItem>
-        ))}
-      </NavbarContent>
-
-      {/* User Profile Dropdown */}
-      <NavbarContent justify="end" className="flex-shrink-0">
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <div className="flex items-center gap-2 sm:gap-3 cursor-pointer p-2 sm:p-3 rounded-xl hover:bg-white/10 transition-all duration-200">
-              <div className="hidden md:flex flex-col items-end">
-                <p className="text-sm font-bold text-white">{user.name}</p>
-                <p className="text-xs text-white/70">{user.email}</p>
-              </div>
-              <Badge 
-                content="3" 
-                color="danger" 
-                size="sm"
-                className="text-white"
-              >
-                <Avatar
-                  isBordered
-                  as="button"
-                  className="transition-transform hover:scale-110 border-2 border-white/30 shadow-lg w-8 h-8 sm:w-10 sm:h-10"
-                  color="default"
-                  name={user.name}
-                  size="md"
-                  src={user.avatar}
-                  classNames={{
-                    base: "bg-gradient-to-br from-orange-200 to-orange-300",
-                    name: "text-orange-800 font-bold"
-                  }}
-                />
-              </Badge>
-              <ChevronDown className="w-4 h-4 text-white/70" />
-            </div>
-          </DropdownTrigger>
-          <DropdownMenu 
-            aria-label="Profile Actions" 
-            variant="flat"
-            classNames={{
-              base: "bg-white/95 backdrop-blur-lg border border-orange-200/50 shadow-xl",
-              list: "gap-1 p-2"
-            }}
-          >
-            <DropdownItem key="profile" className="h-14 gap-2 hover:bg-orange-50 transition-colors">
-              <p className="font-semibold text-gray-800">Signed in as</p>
-              <p className="font-semibold text-orange-600">{user.email}</p>
-            </DropdownItem>
-            <DropdownItem 
-              key="settings" 
-              startContent={<Settings className="w-5 h-5 text-orange-600" />}
-              className="hover:bg-orange-50 transition-colors"
-            >
-              <span className="text-gray-700 font-medium">My Settings</span>
-            </DropdownItem>
-            <DropdownItem 
-              key="help_and_feedback"
-              className="hover:bg-orange-50 transition-colors"
-            >
-              <span className="text-gray-700 font-medium">Help & Feedback</span>
-            </DropdownItem>
-            <DropdownItem 
-              key="logout" 
-              color="danger" 
-              startContent={<LogOut className="w-5 h-5" />}
-              className="hover:bg-red-50 transition-colors"
-            >
-              <span className="font-medium">Log Out</span>
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      </NavbarContent>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="sm:hidden fixed top-20 left-0 w-full h-screen bg-[#023047] border-r border-white/10 pt-6 z-40 overflow-y-auto">
-          {menuItems.map((item, index) => (
-            <div key={`${item.name}-${index}`} className="px-4">
+        {/* Desktop Navigation */}
+        <div className="hidden sm:flex gap-3 flex-1 justify-center">
+          {menuItems.map((item) => (
+            <div key={item.name}>
               {item.disabled ? (
-                <div className="w-full p-4 flex items-center gap-3 text-[#219EBC] opacity-70 cursor-not-allowed">
-                  <item.icon className="w-6 h-6" />
-                  <span className="font-medium">{item.name}</span>
-                </div>
-              ) : (
-                <Link
-                  as={RouterLink}
-                  to={item.href}
-                  className="w-full p-4 flex items-center gap-3 text-white hover:bg-white/10 rounded-lg transition-all duration-200 block"
-                  onClick={() => setIsMenuOpen(false)}
+                <Button
+                  variant="ghost"
+                  disabled
+                  className="font-medium text-[#219EBC] cursor-not-allowed opacity-70 px-6 py-3 flex items-center gap-2"
                 >
-                  <item.icon className="w-6 h-6" />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
+                  <item.icon className="w-5 h-5" />
+                  {item.name}
+                </Button>
+              ) : (
+                <Button
+                  asChild
+                  variant="ghost"
+                  className={`
+                    flex items-center gap-2 px-6 py-3 font-semibold transition-all duration-300
+                    ${location.pathname === item.href 
+                      ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg hover:shadow-xl scale-105 hover:from-orange-500 hover:to-orange-600" 
+                      : "text-white hover:text-orange-300 hover:bg-white/10 hover:scale-105"
+                    }
+                  `}
+                >
+                  <RouterLink to={item.href}>
+                    <item.icon className="w-5 h-5" />
+                    {item.name}
+                  </RouterLink>
+                </Button>
               )}
             </div>
           ))}
-          
-          {/* User Profile in Mobile Menu */}
-          <div className="px-4 pt-4 border-t border-white/10 mt-4">
-            <div className="p-4 flex items-center gap-3 text-white">
-              <Avatar
-                isBordered
-                className="w-10 h-10 border-2 border-white/30"
-                src={user.avatar}
-                name={user.name}
+        </div>
+
+        {/* User Profile Dropdown */}
+        <div className="flex-shrink-0 relative">
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-white/10 text-white"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <div className="hidden md:flex flex-col items-end">
+              <p className="text-sm font-bold text-white">{user.name}</p>
+              <p className="text-xs text-white/70">{user.email}</p>
+            </div>
+            <div className="relative">
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold z-10">
+                3
+              </div>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-200 to-orange-300 rounded-full flex items-center justify-center border-2 border-white/30 shadow-lg hover:scale-110 transition-transform">
+                {user.picture ? (
+                  <img 
+                    src={user.picture} 
+                    alt={user.name || 'User'} 
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-orange-800" />
+                )}
+              </div>
+            </div>
+            <ChevronDown className="w-4 h-4 text-white/70" />
+          </Button>
+
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 z-30" 
+                onClick={() => setIsDropdownOpen(false)}
               />
-              <div className="flex flex-col">
-                <p className="font-medium">{user.name}</p>
-                <p className="text-sm text-white/70">{user.email}</p>
+              
+              {/* Dropdown Content */}
+              <Card className="absolute right-0 top-full mt-2 w-64 bg-white/95 backdrop-blur-lg border border-orange-200/50 shadow-xl z-40">
+                <CardContent className="p-2">
+                  <div className="p-3 border-b border-gray-200">
+                    <p className="font-semibold text-gray-800">Signed in as</p>
+                    <p className="font-semibold text-orange-600 truncate">{user.email}</p>
+                  </div>
+                  
+                  <div className="py-1">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start hover:bg-orange-50 text-gray-700 font-medium"
+                    >
+                      <Settings className="w-5 h-5 text-orange-600 mr-2" />
+                      My Settings
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start hover:bg-orange-50 text-gray-700 font-medium"
+                    >
+                      Help & Feedback
+                    </Button>
+                    
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start hover:bg-red-50 text-red-600 font-medium"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="w-5 h-5 mr-2" />
+                      Log Out
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="sm:hidden fixed inset-0 bg-black/50 z-30" 
+            onClick={() => setIsMenuOpen(false)}
+          />
+          
+          {/* Mobile Menu Content */}
+          <div className="sm:hidden fixed top-20 left-0 w-full bg-[#023047] border-r border-white/10 pt-6 z-40 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            <div className="px-4 space-y-2">
+              {menuItems.map((item, index) => (
+                <div key={`${item.name}-${index}`}>
+                  {item.disabled ? (
+                    <div className="w-full p-4 flex items-center gap-3 text-[#219EBC] opacity-70 cursor-not-allowed rounded-lg">
+                      <item.icon className="w-6 h-6" />
+                      <span className="font-medium">{item.name}</span>
+                    </div>
+                  ) : (
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className="w-full p-4 flex items-center gap-3 text-white hover:bg-white/10 rounded-lg justify-start"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <RouterLink to={item.href}>
+                        <item.icon className="w-6 h-6" />
+                        <span className="font-medium">{item.name}</span>
+                      </RouterLink>
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            {/* User Profile in Mobile Menu */}
+            <div className="px-4 pt-4 border-t border-white/10 mt-4">
+              <div className="p-4 flex items-center gap-3 text-white">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-200 to-orange-300 rounded-full flex items-center justify-center border-2 border-white/30">
+                  {user.picture ? (
+                    <img 
+                      src={user.picture} 
+                      alt={user.name || 'User'} 
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-5 h-5 text-orange-800" />
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <p className="font-medium">{user.name}</p>
+                  <p className="text-sm text-white/70">{user.email}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
-    </Navbar>
+    </header>
   );
 }

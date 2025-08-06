@@ -6,7 +6,6 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-import { HeroUIProvider } from "@heroui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Auth0ProviderWrapper from "./components/Auth0Provider";
 
@@ -57,9 +56,7 @@ export default function App() {
   return (
     <Auth0ProviderWrapper>
       <QueryClientProvider client={queryClient}>
-        <HeroUIProvider>
-          <Outlet />
-        </HeroUIProvider>
+        <Outlet />
       </QueryClientProvider>
     </Auth0ProviderWrapper>
   );

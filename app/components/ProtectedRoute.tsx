@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Spinner } from '@heroui/react';
+import { Loader2 } from 'lucide-react';
 import Login from './Login';
 
 interface ProtectedRouteProps {
@@ -15,7 +15,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Spinner size="lg" color="primary" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#219EBC] mx-auto" />
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>

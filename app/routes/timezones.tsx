@@ -1,21 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Input,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Spinner,
-  Divider,
-  Switch,
-  Textarea,
-  useDisclosure,
-} from '@heroui/react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Separator } from '../components/ui/separator';
 import {
   DndContext,
   closestCenter,
@@ -40,6 +28,8 @@ import {
   GripVertical,
   CheckCircle,
   XCircle,
+  Loader2,
+  X,
 } from 'lucide-react';
 
 import { useTimezones, useCreateTimezone, useUpdateTimezone, useDeleteTimezone } from '../hooks/useTimezone';
@@ -72,72 +62,71 @@ function SortableTimezoneCard({ timezone, onEdit, onDelete }: SortableTimezoneCa
     <Card
       ref={setNodeRef}
       style={style}
-      className={`timezone-item ${isDragging ? 'dragging' : ''} border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg border border-white/30`}
-      isPressable
+      className={`timezone-item ${isDragging ? 'dragging' : ''} border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg border border-white/30 cursor-pointer`}
     >
-      <CardHeader className="flex gap-4 pb-3">
+      <CardHeader className="flex flex-row items-start gap-4 pb-3">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-3 hover:bg-family-200/30 rounded-xl transition-colors bg-gradient-to-br from-family-100/20 to-family-200/20"
+          className="cursor-grab active:cursor-grabbing p-3 hover:bg-[#8ECAE6]/30 rounded-xl transition-colors bg-gradient-to-br from-[#8ECAE6]/20 to-[#219EBC]/20"
         >
-          <GripVertical className="w-6 h-6 text-family-600" />
+          <GripVertical className="w-6 h-6 text-[#219EBC]" />
         </div>
         <div className="flex flex-col flex-grow">
-          <h3 className="text-xl font-serif font-bold text-family-700 mb-1">
+          <CardTitle className="text-xl font-serif font-bold text-[#023047] mb-1">
             {timezone.name}
-          </h3>
+          </CardTitle>
           {timezone.description && (
-            <p className="text-sm text-family-600/80">{timezone.description}</p>
+            <p className="text-sm text-[#219EBC]/80">{timezone.description}</p>
           )}
         </div>
         <div className="flex items-center gap-3">
           {timezone.isActive ? (
-            <div className="flex items-center gap-2 bg-success-100 px-3 py-1 rounded-full">
-              <CheckCircle className="w-4 h-4 text-success-600" />
-              <span className="text-xs font-medium text-success-700">Active</span>
+            <div className="flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full">
+              <CheckCircle className="w-4 h-4 text-green-600" />
+              <span className="text-xs font-medium text-green-700">Active</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 bg-default-100 px-3 py-1 rounded-full">
-              <XCircle className="w-4 h-4 text-default-500" />
-              <span className="text-xs font-medium text-default-600">Inactive</span>
+            <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full">
+              <XCircle className="w-4 h-4 text-gray-500" />
+              <span className="text-xs font-medium text-gray-600">Inactive</span>
             </div>
           )}
         </div>
       </CardHeader>
-      <CardBody className="pt-0">
+      <CardContent className="pt-0">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-6 text-sm">
             {timezone.startTime && timezone.endTime && (
-              <div className="flex items-center gap-2 bg-family-200/30 px-3 py-2 rounded-lg backdrop-blur-sm">
-                <Clock className="w-4 h-4 text-family-600" />
-                <span className="font-medium text-family-700">{timezone.startTime} - {timezone.endTime}</span>
+              <div className="flex items-center gap-2 bg-[#8ECAE6]/30 px-3 py-2 rounded-lg backdrop-blur-sm">
+                <Clock className="w-4 h-4 text-[#219EBC]" />
+                <span className="font-medium text-[#023047]">{timezone.startTime} - {timezone.endTime}</span>
               </div>
             )}
-            <div className="flex items-center gap-2 bg-family-800/20 px-3 py-2 rounded-lg backdrop-blur-sm">
-              <span className="text-xs font-medium text-family-800">Order: {timezone.order}</span>
+            <div className="flex items-center gap-2 bg-[#023047]/20 px-3 py-2 rounded-lg backdrop-blur-sm">
+              <span className="text-xs font-medium text-[#023047]">Order: {timezone.order}</span>
             </div>
           </div>
           <div className="flex gap-2">
             <Button
-              isIconOnly
               size="sm"
-              className="bg-family-200/40 hover:bg-family-200/60 text-family-600 transition-colors backdrop-blur-sm"
-              onPress={() => onEdit(timezone)}
+              variant="outline"
+              className="bg-[#8ECAE6]/40 hover:bg-[#8ECAE6]/60 text-[#219EBC] border-[#8ECAE6] transition-colors backdrop-blur-sm"
+              onClick={() => onEdit(timezone)}
             >
               <Edit3 className="w-4 h-4" />
             </Button>
             <Button
-              isIconOnly
               size="sm"
-              className="bg-danger-200/40 hover:bg-danger-200/60 text-danger-600 transition-colors backdrop-blur-sm"
-              onPress={() => onDelete(timezone.id)}
+              variant="outline"
+              className="bg-red-200/40 hover:bg-red-200/60 text-red-600 border-red-200 transition-colors backdrop-blur-sm"
+              onClick={() => onDelete(timezone.id)}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }
@@ -157,6 +146,7 @@ export default function TimezonesPage() {
   const deleteMutation = useDeleteTimezone();
 
   const [editingTimezone, setEditingTimezone] = useState<Timezone | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<TimezoneFormData>({
     name: '',
     description: '',
@@ -164,8 +154,6 @@ export default function TimezonesPage() {
     endTime: '',
     isActive: true,
   });
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -219,7 +207,7 @@ export default function TimezonesPage() {
         isActive: true,
       });
     }
-    onOpen();
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -231,7 +219,7 @@ export default function TimezonesPage() {
       endTime: '',
       isActive: true,
     });
-    onClose();
+    setIsModalOpen(false);
   };
 
   const handleSubmit = async () => {
@@ -277,8 +265,8 @@ export default function TimezonesPage() {
       <AppLayout>
         <div className="min-h-screen flex justify-center items-center">
           <div className="text-center">
-            <Spinner size="lg" className="text-primary-600" />
-            <p className="mt-4 text-primary-700 font-medium">Loading timezones...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-[#219EBC] mx-auto mb-4" />
+            <p className="text-[#023047] font-medium">Loading timezones...</p>
           </div>
         </div>
       </AppLayout>
@@ -289,14 +277,14 @@ export default function TimezonesPage() {
     return (
       <AppLayout>
         <div className="min-h-screen flex justify-center items-center">
-          <Card className="p-8 shadow-xl border-0 bg-white/90 backdrop-blur-sm border border-danger-200">
-            <CardBody className="text-center">
-              <div className="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <XCircle className="w-8 h-8 text-danger-500" />
+          <Card className="p-8 shadow-xl border-0 bg-white/90 backdrop-blur-sm border border-red-200">
+            <CardContent className="text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <XCircle className="w-8 h-8 text-red-500" />
               </div>
-              <p className="text-danger-600 font-medium text-lg">Error loading timezones</p>
-              <p className="text-danger-500 mt-2">{error.message}</p>
-            </CardBody>
+              <p className="text-red-600 font-medium text-lg">Error loading timezones</p>
+              <p className="text-red-500 mt-2">{error.message}</p>
+            </CardContent>
           </Card>
         </div>
       </AppLayout>
@@ -306,188 +294,203 @@ export default function TimezonesPage() {
   return (
     <AppLayout>
       <div className="min-h-screen relative overflow-hidden">
-      {/* Very subtle background shapes */}
-      <div className="absolute inset-0 opacity-3">
-        <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-to-r from-white/20 to-primary-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-10 w-80 h-80 bg-gradient-to-r from-primary-100/20 to-primary-200/20 rounded-full blur-3xl"></div>
-      </div>
-      
-      <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <div className="relative mb-6">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-primary-700 via-primary-600 to-secondary-600 bg-clip-text text-transparent mb-4 drop-shadow-sm">
-            Timezone Management
-          </h1>
-          <div className="absolute -top-1 -left-1 w-full h-full bg-gradient-to-r from-primary-100/30 to-secondary-100/30 blur-lg opacity-30 -z-10 rounded-lg"></div>
+        {/* Very subtle background shapes */}
+        <div className="absolute inset-0 opacity-3">
+          <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-to-r from-white/20 to-[#8ECAE6]/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-10 w-80 h-80 bg-gradient-to-r from-[#8ECAE6]/20 to-[#219EBC]/20 rounded-full blur-3xl"></div>
         </div>
-        <p className="text-xl text-primary-700 mb-6 max-w-2xl mx-auto">
-          Organize your daily time periods for task scheduling with beautiful drag-and-drop functionality
-        </p>
-        <Button
-          className="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-          size="lg"
-          startContent={<Plus className="w-6 h-6" />}
-          onPress={() => handleOpenModal()}
-        >
-          Add New Timezone
-        </Button>
-      </div>
-
-      <Divider className="mb-12 bg-gradient-to-r from-transparent via-primary-300 to-transparent h-0.5" />
-
-      {/* Timezone List */}
-      {sortedTimezones.length === 0 ? (
-        <Card className="p-16 border-0 shadow-2xl bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg border border-white/30">
-          <CardBody className="text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-family-600/20 to-family-700/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-family-300/30">
-              <Clock className="w-10 h-10 text-family-600" />
+        
+        <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="relative mb-6">
+              <h1 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-[#023047] via-[#219EBC] to-[#8ECAE6] bg-clip-text text-transparent mb-4 drop-shadow-sm">
+                Timezone Management
+              </h1>
+              <div className="absolute -top-1 -left-1 w-full h-full bg-gradient-to-r from-[#8ECAE6]/30 to-[#219EBC]/30 blur-lg opacity-30 -z-10 rounded-lg"></div>
             </div>
-            <h3 className="text-2xl font-serif font-bold text-family-700 mb-3">
-              No timezones yet
-            </h3>
-            <p className="text-family-600/80 mb-8 max-w-md mx-auto">
-              Create your first timezone to start organizing your daily schedule with beautiful time periods
+            <p className="text-xl text-[#023047] mb-6 max-w-2xl mx-auto">
+              Organize your daily time periods for task scheduling with beautiful drag-and-drop functionality
             </p>
             <Button
-              className="bg-gradient-to-r from-family-600 to-family-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="bg-gradient-to-r from-[#8ECAE6] to-[#219EBC] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               size="lg"
-              startContent={<Plus className="w-5 h-5" />}
-              onPress={() => handleOpenModal()}
+              onClick={() => handleOpenModal()}
             >
-              Create First Timezone
+              <Plus className="w-6 h-6 mr-2" />
+              Add New Timezone
             </Button>
-          </CardBody>
-        </Card>
-      ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={sortedTimezones.map((tz) => tz.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="space-y-6">
-              {sortedTimezones.map((timezone) => (
-                <SortableTimezoneCard
-                  key={timezone.id}
-                  timezone={timezone}
-                  onEdit={handleOpenModal}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-      )}
+          </div>
 
-      {/* Add/Edit Modal */}
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={handleCloseModal}
-        size="2xl"
-        scrollBehavior="inside"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                <h2 className="text-2xl font-serif font-bold">
-                  {editingTimezone ? 'Edit Timezone' : 'Create New Timezone'}
-                </h2>
-                <p className="text-sm text-default-500 font-normal">
-                  Define time periods for organizing your daily tasks
+          <Separator className="mb-12 bg-gradient-to-r from-transparent via-[#219EBC] to-transparent h-0.5" />
+
+          {/* Timezone List */}
+          {sortedTimezones.length === 0 ? (
+            <Card className="p-16 border-0 shadow-2xl bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg border border-white/30">
+              <CardContent className="text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#219EBC]/20 to-[#023047]/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#8ECAE6]/30">
+                  <Clock className="w-10 h-10 text-[#219EBC]" />
+                </div>
+                <CardTitle className="text-2xl font-serif font-bold text-[#023047] mb-3">
+                  No timezones yet
+                </CardTitle>
+                <p className="text-[#219EBC]/80 mb-8 max-w-md mx-auto">
+                  Create your first timezone to start organizing your daily schedule with beautiful time periods
                 </p>
-              </ModalHeader>
-              <ModalBody>
+                <Button
+                  className="bg-gradient-to-r from-[#219EBC] to-[#023047] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  size="lg"
+                  onClick={() => handleOpenModal()}
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Create First Timezone
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={sortedTimezones.map((tz) => tz.id)}
+                strategy={verticalListSortingStrategy}
+              >
                 <div className="space-y-6">
-                  <Input
-                    label="Name"
-                    placeholder="e.g., Before Breakfast, After School"
-                    value={formData.name}
-                    onValueChange={(value) =>
-                      setFormData((prev) => ({ ...prev, name: value }))
-                    }
-                    isRequired
-                    variant="bordered"
-                    size="lg"
-                  />
-
-                  <Textarea
-                    label="Description"
-                    placeholder="Optional description for this time period"
-                    value={formData.description}
-                    onValueChange={(value) =>
-                      setFormData((prev) => ({ ...prev, description: value }))
-                    }
-                    variant="bordered"
-                    minRows={2}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input
-                      label="Start Time"
-                      placeholder="e.g., 07:00"
-                      value={formData.startTime}
-                      onValueChange={(value) =>
-                        setFormData((prev) => ({ ...prev, startTime: value }))
-                      }
-                      variant="bordered"
-                      type="time"
+                  {sortedTimezones.map((timezone) => (
+                    <SortableTimezoneCard
+                      key={timezone.id}
+                      timezone={timezone}
+                      onEdit={handleOpenModal}
+                      onDelete={handleDelete}
                     />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          )}
 
-                    <Input
-                      label="End Time"
-                      placeholder="e.g., 08:00"
-                      value={formData.endTime}
-                      onValueChange={(value) =>
-                        setFormData((prev) => ({ ...prev, endTime: value }))
-                      }
-                      variant="bordered"
-                      type="time"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 bg-default-50 rounded-lg">
+          {/* Add/Edit Modal */}
+          {isModalOpen && (
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 bg-black/50 z-40" 
+                onClick={handleCloseModal}
+              />
+              
+              {/* Modal Content */}
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <Card className="w-full max-w-2xl bg-white shadow-2xl">
+                  <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-foreground">Active Status</h4>
-                      <p className="text-sm text-default-500">
-                        Enable this timezone for task scheduling
+                      <CardTitle className="text-2xl font-serif font-bold">
+                        {editingTimezone ? 'Edit Timezone' : 'Create New Timezone'}
+                      </CardTitle>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Define time periods for organizing your daily tasks
                       </p>
                     </div>
-                    <Switch
-                      isSelected={formData.isActive}
-                      onValueChange={(checked) =>
-                        setFormData((prev) => ({ ...prev, isActive: checked }))
-                      }
-                      color="primary"
-                      size="lg"
-                    />
-                  </div>
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button variant="light" onPress={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={handleSubmit}
-                  isLoading={createMutation.isPending || updateMutation.isPending}
-                  disabled={!formData.name.trim()}
-                >
-                  {editingTimezone ? 'Update' : 'Create'} Timezone
-                </Button>
-              </ModalFooter>
+                    <Button variant="ghost" size="sm" onClick={handleCloseModal}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name *</Label>
+                      <Input
+                        id="name"
+                        placeholder="e.g., Before Breakfast, After School"
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, name: e.target.value }))
+                        }
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <textarea
+                        id="description"
+                        className="w-full min-h-[80px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#219EBC] focus:border-transparent resize-none"
+                        placeholder="Optional description for this time period"
+                        value={formData.description}
+                        onChange={(e) =>
+                          setFormData((prev) => ({ ...prev, description: e.target.value }))
+                        }
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="startTime">Start Time</Label>
+                        <Input
+                          id="startTime"
+                          type="time"
+                          value={formData.startTime}
+                          onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, startTime: e.target.value }))
+                          }
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="endTime">End Time</Label>
+                        <Input
+                          id="endTime"
+                          type="time"
+                          value={formData.endTime}
+                          onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, endTime: e.target.value }))
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium">Active Status</h4>
+                        <p className="text-sm text-gray-500">
+                          Enable this timezone for task scheduling
+                        </p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={formData.isActive}
+                          onChange={(e) =>
+                            setFormData((prev) => ({ ...prev, isActive: e.target.checked }))
+                          }
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#219EBC]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#219EBC]"></div>
+                      </label>
+                    </div>
+
+                    <div className="flex gap-3 pt-4">
+                      <Button variant="outline" onClick={handleCloseModal} className="flex-1">
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={!formData.name.trim() || createMutation.isPending || updateMutation.isPending}
+                        className="flex-1 bg-gradient-to-r from-[#8ECAE6] to-[#219EBC] text-white"
+                      >
+                        {(createMutation.isPending || updateMutation.isPending) && (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        )}
+                        {editingTimezone ? 'Update' : 'Create'} Timezone
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </>
           )}
-        </ModalContent>
-      </Modal>
-      
+        </div>
       </div>
-    </div>
     </AppLayout>
   );
 }
