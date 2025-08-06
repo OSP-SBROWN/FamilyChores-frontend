@@ -4,12 +4,13 @@
 html,
 body {
   font-family: 'Roboto', ui-sans-serif, system-ui, sans-serif;
-  background-color: white;
+  background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 50%, #fff7ed 100%);
+  min-height: 100vh;
 }
 
 html.dark,
 body.dark {
-  background-color: #0a0a0a;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%);
   color: white;
 }
 
@@ -17,22 +18,111 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Roboto Serif', ui-serif, Georgia, Cambria, serif;
 }
 
-/* Smooth transitions for drag and drop */
+/* Enhanced animations for drag and drop */
 .timezone-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(142, 202, 230, 0.1) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
 }
 
 .timezone-item:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .timezone-item.dragging {
-  transform: rotate(5deg);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: rotate(3deg) scale(1.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(142, 202, 230, 0.2) 100%);
 }
 
 /* Material 3 style animations */
 .drop-zone-active {
-  background: linear-gradient(45deg, rgba(142, 202, 230, 0.1), rgba(33, 158, 188, 0.1));
+  background: linear-gradient(45deg, rgba(142, 202, 230, 0.15), rgba(33, 158, 188, 0.15));
   border: 2px dashed #219ebc;
+  border-radius: 16px;
+}
+
+/* Glassmorphism effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+/* Beautiful gradient text effects */
+.gradient-text {
+  background: linear-gradient(135deg, #219ebc 0%, #8ecae6 50%, #ffb703 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Smooth page transitions */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Enhanced button hover effects */
+.btn-gradient {
+  background: linear-gradient(135deg, #219ebc 0%, #8ecae6 100%);
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #8ecae6 0%, #219ebc 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(33, 158, 188, 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #219ebc, #8ecae6);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #8ecae6, #219ebc);
+}
+
+/* Floating animation for icons */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse animation for status indicators */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
 }

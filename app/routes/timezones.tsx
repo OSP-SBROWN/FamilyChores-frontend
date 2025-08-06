@@ -71,52 +71,57 @@ function SortableTimezoneCard({ timezone, onEdit, onDelete }: SortableTimezoneCa
     <Card
       ref={setNodeRef}
       style={style}
-      className={`timezone-item ${isDragging ? 'dragging' : ''} border-2 hover:border-primary-300 transition-all duration-200`}
+      className={`timezone-item ${isDragging ? 'dragging' : ''} border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-r from-white to-primary-50 backdrop-blur-sm`}
       isPressable
     >
-      <CardHeader className="flex gap-3 pb-2">
+      <CardHeader className="flex gap-4 pb-3">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-2 hover:bg-default-100 rounded-md transition-colors"
+          className="cursor-grab active:cursor-grabbing p-3 hover:bg-primary-100 rounded-xl transition-colors bg-gradient-to-br from-primary-50 to-primary-100"
         >
-          <GripVertical className="w-5 h-5 text-default-400" />
+          <GripVertical className="w-6 h-6 text-primary-600" />
         </div>
         <div className="flex flex-col flex-grow">
-          <h3 className="text-lg font-serif font-semibold text-foreground">
+          <h3 className="text-xl font-serif font-bold text-primary-700 mb-1">
             {timezone.name}
           </h3>
           {timezone.description && (
-            <p className="text-sm text-default-500">{timezone.description}</p>
+            <p className="text-sm text-primary-600/70">{timezone.description}</p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {timezone.isActive ? (
-            <CheckCircle className="w-5 h-5 text-success" />
+            <div className="flex items-center gap-2 bg-success-100 px-3 py-1 rounded-full">
+              <CheckCircle className="w-4 h-4 text-success-600" />
+              <span className="text-xs font-medium text-success-700">Active</span>
+            </div>
           ) : (
-            <XCircle className="w-5 h-5 text-default-400" />
+            <div className="flex items-center gap-2 bg-default-100 px-3 py-1 rounded-full">
+              <XCircle className="w-4 h-4 text-default-500" />
+              <span className="text-xs font-medium text-default-600">Inactive</span>
+            </div>
           )}
         </div>
       </CardHeader>
       <CardBody className="pt-0">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4 text-sm text-default-600">
+          <div className="flex items-center gap-6 text-sm">
             {timezone.startTime && timezone.endTime && (
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                <span>{timezone.startTime} - {timezone.endTime}</span>
+              <div className="flex items-center gap-2 bg-primary-100 px-3 py-2 rounded-lg">
+                <Clock className="w-4 h-4 text-primary-600" />
+                <span className="font-medium text-primary-700">{timezone.startTime} - {timezone.endTime}</span>
               </div>
             )}
-            <span className="text-xs bg-default-100 px-2 py-1 rounded-full">
-              Order: {timezone.order}
-            </span>
+            <div className="flex items-center gap-2 bg-secondary-100 px-3 py-2 rounded-lg">
+              <span className="text-xs font-medium text-secondary-700">Order: {timezone.order}</span>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button
               isIconOnly
               size="sm"
-              variant="light"
-              color="primary"
+              className="bg-primary-100 hover:bg-primary-200 text-primary-600 transition-colors"
               onPress={() => onEdit(timezone)}
             >
               <Edit3 className="w-4 h-4" />
@@ -124,8 +129,7 @@ function SortableTimezoneCard({ timezone, onEdit, onDelete }: SortableTimezoneCa
             <Button
               isIconOnly
               size="sm"
-              variant="light"
-              color="danger"
+              className="bg-danger-100 hover:bg-danger-200 text-danger-600 transition-colors"
               onPress={() => onDelete(timezone.id)}
             >
               <Trash2 className="w-4 h-4" />
@@ -269,18 +273,25 @@ export default function TimezonesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Spinner size="lg" color="primary" />
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex justify-center items-center">
+        <div className="text-center">
+          <Spinner size="lg" className="text-primary-500" />
+          <p className="mt-4 text-primary-600 font-medium">Loading timezones...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Card className="p-6">
-          <CardBody>
-            <p className="text-danger">Error loading timezones: {error.message}</p>
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex justify-center items-center">
+        <Card className="p-8 shadow-xl border-0 bg-gradient-to-br from-white to-danger-50">
+          <CardBody className="text-center">
+            <div className="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <XCircle className="w-8 h-8 text-danger-500" />
+            </div>
+            <p className="text-danger-600 font-medium text-lg">Error loading timezones</p>
+            <p className="text-danger-500 mt-2">{error.message}</p>
           </CardBody>
         </Card>
       </div>
@@ -288,48 +299,51 @@ export default function TimezonesPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-serif font-bold text-foreground mb-2">
+      <div className="text-center mb-12">
+        <div className="relative mb-6">
+          <h1 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-primary-600 via-primary-500 to-secondary-500 bg-clip-text text-transparent mb-4">
             Timezone Management
           </h1>
-          <p className="text-default-600">
-            Organize your daily time periods for task scheduling
-          </p>
+          <div className="absolute -top-1 -left-1 w-full h-full bg-gradient-to-r from-primary-100 to-secondary-100 blur-lg opacity-20 -z-10 rounded-lg"></div>
         </div>
+        <p className="text-xl text-primary-700/80 mb-6 max-w-2xl mx-auto">
+          Organize your daily time periods for task scheduling with beautiful drag-and-drop functionality
+        </p>
         <Button
-          color="primary"
+          className="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           size="lg"
-          startContent={<Plus className="w-5 h-5" />}
+          startContent={<Plus className="w-6 h-6" />}
           onPress={() => handleOpenModal()}
-          className="font-medium"
         >
-          Add Timezone
+          Add New Timezone
         </Button>
       </div>
 
-      <Divider className="mb-8" />
+      <Divider className="mb-12 bg-gradient-to-r from-transparent via-primary-300 to-transparent h-0.5" />
 
       {/* Timezone List */}
       {sortedTimezones.length === 0 ? (
-        <Card className="p-12">
+        <Card className="p-16 border-0 shadow-xl bg-gradient-to-br from-white to-primary-50">
           <CardBody className="text-center">
-            <Clock className="w-16 h-16 text-default-300 mx-auto mb-4" />
-            <h3 className="text-xl font-serif font-semibold text-default-500 mb-2">
+            <div className="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Clock className="w-10 h-10 text-primary-600" />
+            </div>
+            <h3 className="text-2xl font-serif font-bold text-primary-700 mb-3">
               No timezones yet
             </h3>
-            <p className="text-default-400 mb-6">
-              Create your first timezone to start organizing your daily schedule
+            <p className="text-primary-600/80 mb-8 max-w-md mx-auto">
+              Create your first timezone to start organizing your daily schedule with beautiful time periods
             </p>
             <Button
-              color="primary"
-              variant="flat"
+              className="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              size="lg"
               startContent={<Plus className="w-5 h-5" />}
               onPress={() => handleOpenModal()}
             >
-              Create Timezone
+              Create First Timezone
             </Button>
           </CardBody>
         </Card>
@@ -343,7 +357,7 @@ export default function TimezonesPage() {
             items={sortedTimezones.map((tz) => tz.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="space-y-4">
+            <div className="space-y-6">
               {sortedTimezones.map((timezone) => (
                 <SortableTimezoneCard
                   key={timezone.id}
@@ -356,6 +370,9 @@ export default function TimezonesPage() {
           </SortableContext>
         </DndContext>
       )}
+      
+      </div>
+    </div>
 
       {/* Add/Edit Modal */}
       <Modal
