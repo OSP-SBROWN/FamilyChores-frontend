@@ -16,7 +16,7 @@ import {
   Avatar,
   Badge,
 } from '@heroui/react';
-import { Home, Clock, Users, Calendar, Settings, LogOut, ChevronDown, Heart } from 'lucide-react';
+import { Home, Clock, Users, Calendar, Settings, LogOut, ChevronDown, Heart, Menu } from 'lucide-react';
 import { Link as RouterLink, useLocation } from 'react-router';
 
 interface HeaderProps {
@@ -40,12 +40,23 @@ export default function Header({ user = { name: "John Doe", email: "john@example
   ];
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen}>
+    <Navbar 
+      onMenuOpenChange={setIsMenuOpen}
+      isMenuOpen={isMenuOpen}
+      classNames={{
+        base: "bg-[#023047] shadow-xl border-b border-white/10",
+        wrapper: "px-4 sm:px-6",
+        content: "gap-4"
+      }}
+      maxWidth="full"
+      height="5rem"
+    >
       {/* Mobile Menu Toggle and Brand */}
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden"
+          className="sm:hidden text-white hover:bg-white/10 p-2 rounded-lg transition-all duration-200"
+          icon={<Menu className="w-6 h-6" />}
         />
         <NavbarBrand>
           <div className="flex items-center gap-4">
@@ -53,10 +64,10 @@ export default function Header({ user = { name: "John Doe", email: "john@example
               <Heart className="w-7 h-7 text-white" fill="currentColor" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-3xl font-script font-bold bg-gradient-to-r from-orange-600 via-orange-700 to-orange-800 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-script font-bold text-white">
                 ChoreNest
               </h1>
-              <p className="text-sm text-orange-600/80 font-medium tracking-wide">
+              <p className="text-sm text-white/70 font-medium tracking-wide">
                 Family Organization Hub
               </p>
             </div>
@@ -73,7 +84,7 @@ export default function Header({ user = { name: "John Doe", email: "john@example
                 variant="light"
                 isDisabled
                 startContent={<item.icon className="w-5 h-5" />}
-                className="font-medium text-gray-400 cursor-not-allowed opacity-50 px-6 py-3"
+                className="font-medium text-[#219EBC] cursor-not-allowed opacity-70 px-6 py-3"
               >
                 {item.name}
               </Button>
@@ -81,12 +92,11 @@ export default function Header({ user = { name: "John Doe", email: "john@example
               <Link
                 as={RouterLink}
                 to={item.href}
-                color={location.pathname === item.href ? "primary" : "foreground"}
                 className={`
                   flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300
                   ${location.pathname === item.href 
                     ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg hover:shadow-xl scale-105" 
-                    : "text-gray-700 hover:text-orange-600 hover:bg-orange-100 hover:scale-105"
+                    : "text-white hover:text-orange-300 hover:bg-white/10 hover:scale-105"
                   }
                 `}
               >
@@ -102,10 +112,10 @@ export default function Header({ user = { name: "John Doe", email: "john@example
       <NavbarContent justify="end">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            <div className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-orange-100 transition-all duration-200">
+            <div className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-white/10 transition-all duration-200">
               <div className="hidden sm:flex flex-col items-end">
-                <p className="text-sm font-bold text-gray-800">{user.name}</p>
-                <p className="text-xs text-orange-600">{user.email}</p>
+                <p className="text-sm font-bold text-white">{user.name}</p>
+                <p className="text-xs text-white/70">{user.email}</p>
               </div>
               <Badge 
                 content="3" 
@@ -116,7 +126,7 @@ export default function Header({ user = { name: "John Doe", email: "john@example
                 <Avatar
                   isBordered
                   as="button"
-                  className="transition-transform hover:scale-110 border-2 border-orange-300 shadow-lg"
+                  className="transition-transform hover:scale-110 border-2 border-white/30 shadow-lg"
                   color="default"
                   name={user.name}
                   size="md"
@@ -127,7 +137,7 @@ export default function Header({ user = { name: "John Doe", email: "john@example
                   }}
                 />
               </Badge>
-              <ChevronDown className="w-4 h-4 text-orange-600" />
+              <ChevronDown className="w-4 h-4 text-white/70" />
             </div>
           </DropdownTrigger>
           <DropdownMenu 
@@ -168,11 +178,15 @@ export default function Header({ user = { name: "John Doe", email: "john@example
       </NavbarContent>
 
       {/* Mobile Menu */}
-      <NavbarMenu>
+      <NavbarMenu
+        classNames={{
+          base: "bg-[#023047] border-r border-white/10 pt-6"
+        }}
+      >
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item.name}-${index}`}>
             {item.disabled ? (
-              <div className="w-full p-4 flex items-center gap-3 text-gray-400 opacity-50 cursor-not-allowed">
+              <div className="w-full p-4 flex items-center gap-3 text-[#219EBC] opacity-70 cursor-not-allowed">
                 <item.icon className="w-6 h-6" />
                 <span className="font-medium">{item.name}</span>
               </div>
@@ -181,7 +195,7 @@ export default function Header({ user = { name: "John Doe", email: "john@example
                 as={RouterLink}
                 to={item.href}
                 className="w-full"
-                color={location.pathname === item.href ? "primary" : "foreground"}
+                color="foreground"
                 size="lg"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -189,7 +203,7 @@ export default function Header({ user = { name: "John Doe", email: "john@example
                   w-full p-4 rounded-xl flex items-center gap-3 transition-all duration-300
                   ${location.pathname === item.href 
                     ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg" 
-                    : "text-gray-700 hover:text-orange-600 hover:bg-orange-100"
+                    : "text-white hover:text-orange-300 hover:bg-white/10"
                   }
                 `}>
                   <item.icon className="w-6 h-6" />
@@ -202,11 +216,11 @@ export default function Header({ user = { name: "John Doe", email: "john@example
         
         {/* Mobile User Info */}
         <NavbarMenuItem>
-          <div className="mt-6 p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl border border-orange-200 shadow-lg">
+          <div className="mt-6 p-4 bg-white/10 rounded-xl border border-white/20 shadow-lg">
             <div className="flex items-center gap-3">
               <Avatar
                 isBordered
-                className="border-2 border-orange-300"
+                className="border-2 border-white/30"
                 name={user.name}
                 size="md"
                 src={user.avatar}
@@ -216,8 +230,8 @@ export default function Header({ user = { name: "John Doe", email: "john@example
                 }}
               />
               <div>
-                <p className="font-bold text-gray-800">{user.name}</p>
-                <p className="text-sm text-orange-600">{user.email}</p>
+                <p className="font-bold text-white">{user.name}</p>
+                <p className="text-sm text-white/70">{user.email}</p>
               </div>
             </div>
           </div>
