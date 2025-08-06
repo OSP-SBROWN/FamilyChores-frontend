@@ -370,9 +370,6 @@ export default function TimezonesPage() {
           </SortableContext>
         </DndContext>
       )}
-      
-      </div>
-    </div>
 
       {/* Add/Edit Modal */}
       <Modal
@@ -476,6 +473,8 @@ export default function TimezonesPage() {
           )}
         </ModalContent>
       </Modal>
+      
+      </div>
     </div>
   );
 }
