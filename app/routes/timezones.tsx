@@ -273,10 +273,10 @@ export default function TimezonesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-family-600 via-family-500 to-family-800 flex justify-center items-center">
+      <div className="min-h-screen flex justify-center items-center">
         <div className="text-center">
-          <Spinner size="lg" className="text-white" />
-          <p className="mt-4 text-white/90 font-medium drop-shadow-md">Loading timezones...</p>
+          <Spinner size="lg" className="text-primary-600" />
+          <p className="mt-4 text-primary-700 font-medium">Loading timezones...</p>
         </div>
       </div>
     );
@@ -284,10 +284,10 @@ export default function TimezonesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-family-600 via-family-500 to-family-800 flex justify-center items-center">
-        <Card className="p-8 shadow-2xl border-0 bg-gradient-to-br from-white/95 to-danger-50/90 backdrop-blur-lg border border-white/30">
+      <div className="min-h-screen flex justify-center items-center">
+        <Card className="p-8 shadow-xl border-0 bg-white/90 backdrop-blur-sm border border-danger-200">
           <CardBody className="text-center">
-            <div className="w-16 h-16 bg-danger-100/80 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <XCircle className="w-8 h-8 text-danger-500" />
             </div>
             <p className="text-danger-600 font-medium text-lg">Error loading timezones</p>
@@ -299,27 +299,27 @@ export default function TimezonesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-family-600 via-family-500 to-family-800 relative overflow-hidden">
-      {/* Animated background shapes */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-to-r from-family-400 to-family-300 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 left-10 w-80 h-80 bg-gradient-to-r from-family-800 to-family-900 rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Very subtle background shapes */}
+      <div className="absolute inset-0 opacity-3">
+        <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-to-r from-white/20 to-primary-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-10 w-80 h-80 bg-gradient-to-r from-primary-100/20 to-primary-200/20 rounded-full blur-3xl"></div>
       </div>
       
       <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
       {/* Header */}
       <div className="text-center mb-12">
         <div className="relative mb-6">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-white via-family-100 to-family-200 bg-clip-text text-transparent mb-4 drop-shadow-lg">
+          <h1 className="text-5xl md:text-6xl font-serif font-bold bg-gradient-to-r from-primary-700 via-primary-600 to-secondary-600 bg-clip-text text-transparent mb-4 drop-shadow-sm">
             Timezone Management
           </h1>
-          <div className="absolute -top-1 -left-1 w-full h-full bg-gradient-to-r from-white/20 to-family-200/20 blur-lg opacity-30 -z-10 rounded-lg"></div>
+          <div className="absolute -top-1 -left-1 w-full h-full bg-gradient-to-r from-primary-100/30 to-secondary-100/30 blur-lg opacity-30 -z-10 rounded-lg"></div>
         </div>
-        <p className="text-xl text-white/90 mb-6 max-w-2xl mx-auto drop-shadow-md">
+        <p className="text-xl text-primary-700 mb-6 max-w-2xl mx-auto">
           Organize your daily time periods for task scheduling with beautiful drag-and-drop functionality
         </p>
         <Button
-          className="bg-gradient-to-r from-white/90 to-white/95 text-family-700 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/30"
+          className="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           size="lg"
           startContent={<Plus className="w-6 h-6" />}
           onPress={() => handleOpenModal()}
@@ -328,7 +328,7 @@ export default function TimezonesPage() {
         </Button>
       </div>
 
-      <Divider className="mb-12 bg-gradient-to-r from-transparent via-white/50 to-transparent h-1" />
+      <Divider className="mb-12 bg-gradient-to-r from-transparent via-primary-300 to-transparent h-0.5" />
 
       {/* Timezone List */}
       {sortedTimezones.length === 0 ? (

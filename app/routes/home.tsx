@@ -12,54 +12,54 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-family-600 via-family-500 to-family-800 relative overflow-hidden">
-      {/* Animated background shapes */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-family-400 to-family-300 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-20 w-96 h-96 bg-gradient-to-r from-family-800 to-family-900 rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-family-500 to-family-600 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Very subtle background shapes */}
+      <div className="absolute inset-0 opacity-3">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-white/30 to-primary-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 right-20 w-96 h-96 bg-gradient-to-r from-primary-200/20 to-primary-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-white/20 to-primary-100/20 rounded-full blur-3xl"></div>
       </div>
       
       <div className="container mx-auto px-4 py-8 max-w-6xl relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
           <div className="relative mb-6">
-            <h1 className="text-6xl md:text-7xl font-serif font-bold bg-gradient-to-r from-white via-family-100 to-family-200 bg-clip-text text-transparent mb-4 drop-shadow-lg">
+            <h1 className="text-6xl md:text-7xl font-serif font-bold bg-gradient-to-r from-primary-700 via-primary-600 to-secondary-600 bg-clip-text text-transparent mb-4 drop-shadow-sm">
               Family Chores
             </h1>
-            <div className="absolute -top-2 -left-2 w-full h-full bg-gradient-to-r from-white/30 to-family-200/30 blur-lg opacity-50 -z-10 rounded-lg"></div>
+            <div className="absolute -top-2 -left-2 w-full h-full bg-gradient-to-r from-primary-100/30 to-secondary-100/30 blur-lg opacity-50 -z-10 rounded-lg"></div>
           </div>
-          <p className="text-2xl text-white/90 mb-3 font-medium drop-shadow-md">
+          <p className="text-2xl text-primary-700 mb-3 font-medium drop-shadow-sm">
             ReactVersion3 - Clean, Modern, & Beautiful
           </p>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto drop-shadow-sm">
+          <p className="text-lg text-primary-600 max-w-2xl mx-auto">
             Built with HeroUI, React Router v7, and Material 3 design principles for the perfect family organization experience
           </p>
         </div>
 
-      <Divider className="mb-16 bg-gradient-to-r from-transparent via-white/40 to-transparent h-1" />
+      <Divider className="mb-16 bg-gradient-to-r from-transparent via-primary-300 to-transparent h-0.5" />
 
       {/* Feature Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        <Card className="border-0 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-white/95 to-family-100/80 backdrop-blur-lg border border-white/20">
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm border border-primary-100">
           <CardHeader className="flex gap-4 pb-2">
-            <div className="p-3 bg-gradient-to-br from-family-600 to-family-700 rounded-xl shadow-lg">
+            <div className="p-3 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl shadow-lg">
               <Clock className="w-7 h-7 text-white" />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-xl font-serif font-bold text-family-700">Timezone Management</h3>
-              <p className="text-sm text-family-600/80">Organize time periods</p>
+              <h3 className="text-xl font-serif font-bold text-primary-700">Timezone Management</h3>
+              <p className="text-sm text-primary-600/80">Organize time periods</p>
             </div>
           </CardHeader>
           <CardBody className="pt-2">
-            <p className="text-family-700/90 mb-6 leading-relaxed">
+            <p className="text-primary-700/90 mb-6 leading-relaxed">
               Create and manage time periods like "Before Breakfast" or "After School" 
               with beautiful drag-and-drop reordering.
             </p>
             <Button
               as={Link}
               to="/timezones"
-              className="w-full bg-gradient-to-r from-family-600 to-family-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               size="lg"
             >
               Manage Timezones
@@ -67,23 +67,23 @@ export default function Home() {
           </CardBody>
         </Card>
 
-        <Card className="border-0 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-white/95 to-family-800/80 backdrop-blur-lg border border-white/20">
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm border border-secondary-100">
           <CardHeader className="flex gap-4 pb-2">
-            <div className="p-3 bg-gradient-to-br from-family-800 to-family-900 rounded-xl shadow-lg">
+            <div className="p-3 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl shadow-lg">
               <Users className="w-7 h-7 text-white" />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-xl font-serif font-bold text-family-800">People Management</h3>
-              <p className="text-sm text-family-700/80">Family members</p>
+              <h3 className="text-xl font-serif font-bold text-secondary-700">People Management</h3>
+              <p className="text-sm text-secondary-600/80">Family members</p>
             </div>
           </CardHeader>
           <CardBody className="pt-2">
-            <p className="text-family-800/90 mb-6 leading-relaxed">
+            <p className="text-secondary-700/90 mb-6 leading-relaxed">
               Add and manage family members, set their preferences, and track 
               their chore completion history.
             </p>
             <Button
-              className="w-full bg-gradient-to-r from-family-800 to-family-900 text-white font-semibold shadow-lg opacity-70 cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-secondary-400 to-secondary-500 text-white font-semibold shadow-lg opacity-70 cursor-not-allowed"
               size="lg"
               isDisabled
             >
@@ -92,7 +92,7 @@ export default function Home() {
           </CardBody>
         </Card>
 
-        <Card className="border-0 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-2 bg-gradient-to-br from-white/95 to-success-100/80 backdrop-blur-lg border border-white/20 md:col-span-2 lg:col-span-1">
+        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm border border-success-100 md:col-span-2 lg:col-span-1">
           <CardHeader className="flex gap-4 pb-2">
             <div className="p-3 bg-gradient-to-br from-success-500 to-success-600 rounded-xl shadow-lg">
               <Calendar className="w-7 h-7 text-white" />

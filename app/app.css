@@ -4,7 +4,7 @@
 html,
 body {
   font-family: 'Roboto', ui-sans-serif, system-ui, sans-serif;
-  background: linear-gradient(135deg, #219EBC 0%, #8ECAE6 25%, #FFB703 75%, #FB8500 100%);
+  background: linear-gradient(135deg, rgba(142, 202, 230, 0.8) 0%, rgba(33, 158, 188, 0.9) 50%, rgba(2, 48, 71, 0.95) 100%);
   min-height: 100vh;
 }
 
