@@ -17,7 +17,7 @@ import {
   Badge,
 } from '@heroui/react';
 import { Home, Clock, Users, Calendar, Settings, LogOut, ChevronDown, Heart, Menu } from 'lucide-react';
-import { Link as RouterLink, useLocation } from 'react-router';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 interface HeaderProps {
   user?: {
@@ -46,28 +46,34 @@ export default function Header({ user = { name: "John Doe", email: "john@example
       classNames={{
         base: "bg-[#023047] shadow-xl border-b border-white/10",
         wrapper: "px-4 sm:px-6",
-        content: "gap-4"
+        content: "gap-4",
+        menu: "bg-[#023047] border-r border-white/10 pt-6 shadow-2xl",
+        menuItem: "text-white"
       }}
       maxWidth="full"
       height="5rem"
     >
       {/* Mobile Menu Toggle and Brand */}
-      <NavbarContent>
-        <NavbarMenuToggle
+      <NavbarContent className="flex-1">
+        <Button
+          isIconOnly
+          variant="light"
+          className="sm:hidden text-white hover:bg-white/10 p-2 transition-all duration-200"
+          onPress={() => setIsMenuOpen(!isMenuOpen)}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden text-white hover:bg-white/10 p-2 rounded-lg transition-all duration-200"
-          icon={<Menu className="w-6 h-6" />}
-        />
-        <NavbarBrand>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <Heart className="w-7 h-7 text-white" fill="currentColor" />
+        >
+          <Menu className="w-6 h-6 text-white" />
+        </Button>
+        <NavbarBrand className="flex-1 justify-center sm:justify-start">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <Heart className="w-5 h-5 sm:w-7 sm:h-7 text-white" fill="currentColor" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-3xl font-script font-bold text-white">
-                ChoreNest
+              <h1 className="text-xl sm:text-3xl font-bold app-name">
+                <span className="chore">Chore</span><span className="nest">Nest</span>
               </h1>
-              <p className="text-sm text-white/70 font-medium tracking-wide">
+              <p className="text-xs sm:text-sm text-white/70 font-medium tracking-wide hidden sm:block">
                 Family Organization Hub
               </p>
             </div>
@@ -109,11 +115,11 @@ export default function Header({ user = { name: "John Doe", email: "john@example
       </NavbarContent>
 
       {/* User Profile Dropdown */}
-      <NavbarContent justify="end">
+      <NavbarContent justify="end" className="flex-shrink-0">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            <div className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-white/10 transition-all duration-200">
-              <div className="hidden sm:flex flex-col items-end">
+            <div className="flex items-center gap-2 sm:gap-3 cursor-pointer p-2 sm:p-3 rounded-xl hover:bg-white/10 transition-all duration-200">
+              <div className="hidden md:flex flex-col items-end">
                 <p className="text-sm font-bold text-white">{user.name}</p>
                 <p className="text-xs text-white/70">{user.email}</p>
               </div>
@@ -126,7 +132,7 @@ export default function Header({ user = { name: "John Doe", email: "john@example
                 <Avatar
                   isBordered
                   as="button"
-                  className="transition-transform hover:scale-110 border-2 border-white/30 shadow-lg"
+                  className="transition-transform hover:scale-110 border-2 border-white/30 shadow-lg w-8 h-8 sm:w-10 sm:h-10"
                   color="default"
                   name={user.name}
                   size="md"
@@ -178,65 +184,46 @@ export default function Header({ user = { name: "John Doe", email: "john@example
       </NavbarContent>
 
       {/* Mobile Menu */}
-      <NavbarMenu
-        classNames={{
-          base: "bg-[#023047] border-r border-white/10 pt-6"
-        }}
-      >
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item.name}-${index}`}>
-            {item.disabled ? (
-              <div className="w-full p-4 flex items-center gap-3 text-[#219EBC] opacity-70 cursor-not-allowed">
-                <item.icon className="w-6 h-6" />
-                <span className="font-medium">{item.name}</span>
-              </div>
-            ) : (
-              <Link
-                as={RouterLink}
-                to={item.href}
-                className="w-full"
-                color="foreground"
-                size="lg"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className={`
-                  w-full p-4 rounded-xl flex items-center gap-3 transition-all duration-300
-                  ${location.pathname === item.href 
-                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg" 
-                    : "text-white hover:text-orange-300 hover:bg-white/10"
-                  }
-                `}>
+      {isMenuOpen && (
+        <div className="sm:hidden fixed top-20 left-0 w-full h-screen bg-[#023047] border-r border-white/10 pt-6 z-40 overflow-y-auto">
+          {menuItems.map((item, index) => (
+            <div key={`${item.name}-${index}`} className="px-4">
+              {item.disabled ? (
+                <div className="w-full p-4 flex items-center gap-3 text-[#219EBC] opacity-70 cursor-not-allowed">
                   <item.icon className="w-6 h-6" />
-                  <span className="font-semibold">{item.name}</span>
+                  <span className="font-medium">{item.name}</span>
                 </div>
-              </Link>
-            )}
-          </NavbarMenuItem>
-        ))}
-        
-        {/* Mobile User Info */}
-        <NavbarMenuItem>
-          <div className="mt-6 p-4 bg-white/10 rounded-xl border border-white/20 shadow-lg">
-            <div className="flex items-center gap-3">
+              ) : (
+                <Link
+                  as={RouterLink}
+                  to={item.href}
+                  className="w-full p-4 flex items-center gap-3 text-white hover:bg-white/10 rounded-lg transition-all duration-200 block"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <item.icon className="w-6 h-6" />
+                  <span className="font-medium">{item.name}</span>
+                </Link>
+              )}
+            </div>
+          ))}
+          
+          {/* User Profile in Mobile Menu */}
+          <div className="px-4 pt-4 border-t border-white/10 mt-4">
+            <div className="p-4 flex items-center gap-3 text-white">
               <Avatar
                 isBordered
-                className="border-2 border-white/30"
-                name={user.name}
-                size="md"
+                className="w-10 h-10 border-2 border-white/30"
                 src={user.avatar}
-                classNames={{
-                  base: "bg-gradient-to-br from-orange-200 to-orange-300",
-                  name: "text-orange-800 font-bold"
-                }}
+                name={user.name}
               />
-              <div>
-                <p className="font-bold text-white">{user.name}</p>
+              <div className="flex flex-col">
+                <p className="font-medium">{user.name}</p>
                 <p className="text-sm text-white/70">{user.email}</p>
               </div>
             </div>
           </div>
-        </NavbarMenuItem>
-      </NavbarMenu>
+        </div>
+      )}
     </Navbar>
   );
 }

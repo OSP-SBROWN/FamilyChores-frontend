@@ -1,15 +1,7 @@
-import type { Route } from "./+types/home";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { Card, CardBody, CardHeader, Button, Divider } from "@heroui/react";
 import { Clock, Users, Calendar, Settings, BarChart3, CheckSquare } from "lucide-react";
 import AppLayout from "../components/AppLayout";
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "ChoreNest - Dashboard" },
-    { name: "description", content: "Modern family chore management system" },
-  ];
-}
 
 export default function Home() {
   const user = {
