@@ -44,6 +44,7 @@ import {
 
 import { useTimezones, useCreateTimezone, useUpdateTimezone, useDeleteTimezone } from '../hooks/useTimezone';
 import type { Timezone, CreateTimezoneDto, UpdateTimezoneDto } from '../types/timezone';
+import AppLayout from '../components/AppLayout';
 
 interface SortableTimezoneCardProps {
   timezone: Timezone;
@@ -166,6 +167,12 @@ export default function TimezonesPage() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const user = {
+    name: "John Doe",
+    email: "john@example.com",
+    avatar: undefined
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -273,33 +280,38 @@ export default function TimezonesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="text-center">
-          <Spinner size="lg" className="text-primary-600" />
-          <p className="mt-4 text-primary-700 font-medium">Loading timezones...</p>
+      <AppLayout user={user}>
+        <div className="min-h-screen flex justify-center items-center">
+          <div className="text-center">
+            <Spinner size="lg" className="text-primary-600" />
+            <p className="mt-4 text-primary-700 font-medium">Loading timezones...</p>
+          </div>
         </div>
-      </div>
+      </AppLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <Card className="p-8 shadow-xl border-0 bg-white/90 backdrop-blur-sm border border-danger-200">
-          <CardBody className="text-center">
-            <div className="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <XCircle className="w-8 h-8 text-danger-500" />
-            </div>
-            <p className="text-danger-600 font-medium text-lg">Error loading timezones</p>
-            <p className="text-danger-500 mt-2">{error.message}</p>
-          </CardBody>
-        </Card>
-      </div>
+      <AppLayout user={user}>
+        <div className="min-h-screen flex justify-center items-center">
+          <Card className="p-8 shadow-xl border-0 bg-white/90 backdrop-blur-sm border border-danger-200">
+            <CardBody className="text-center">
+              <div className="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <XCircle className="w-8 h-8 text-danger-500" />
+              </div>
+              <p className="text-danger-600 font-medium text-lg">Error loading timezones</p>
+              <p className="text-danger-500 mt-2">{error.message}</p>
+            </CardBody>
+          </Card>
+        </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <AppLayout user={user}>
+      <div className="min-h-screen relative overflow-hidden">
       {/* Very subtle background shapes */}
       <div className="absolute inset-0 opacity-3">
         <div className="absolute top-20 right-10 w-64 h-64 bg-gradient-to-r from-white/20 to-primary-200/20 rounded-full blur-3xl"></div>
@@ -482,5 +494,6 @@ export default function TimezonesPage() {
       
       </div>
     </div>
+    </AppLayout>
   );
 }

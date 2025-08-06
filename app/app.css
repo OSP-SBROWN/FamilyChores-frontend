@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Dancing+Script:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 html,
@@ -16,6 +16,11 @@ body.dark {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Roboto Serif', ui-serif, Georgia, Cambria, serif;
+}
+
+/* Custom script font class for branding */
+.font-script {
+  font-family: 'Dancing Script', cursive;
 }
 
 /* Enhanced animations for drag and drop */

@@ -1,26 +1,34 @@
 import type { Route } from "./+types/home";
 import { Link } from "react-router";
 import { Card, CardBody, CardHeader, Button, Divider } from "@heroui/react";
-import { Clock, Users, Calendar, Settings } from "lucide-react";
+import { Clock, Users, Calendar, Settings, BarChart3, CheckSquare } from "lucide-react";
+import AppLayout from "../components/AppLayout";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Family Chores - ReactVersion3" },
+    { title: "ChoreNest - Dashboard" },
     { name: "description", content: "Modern family chore management system" },
   ];
 }
 
 export default function Home() {
+  const user = {
+    name: "John Doe",
+    email: "john@example.com",
+    avatar: undefined
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Very subtle background shapes */}
-      <div className="absolute inset-0 opacity-3">
-        <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-white/30 to-primary-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/3 right-20 w-96 h-96 bg-gradient-to-r from-primary-200/20 to-primary-300/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-white/20 to-primary-100/20 rounded-full blur-3xl"></div>
-      </div>
-      
-      <div className="container mx-auto px-4 py-8 max-w-6xl relative z-10">
+    <AppLayout user={user}>
+      <div className="relative overflow-hidden">
+        {/* Very subtle background shapes */}
+        <div className="absolute inset-0 opacity-3">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r from-white/30 to-primary-200/20 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/3 right-20 w-96 h-96 bg-gradient-to-r from-primary-200/20 to-primary-300/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-gradient-to-r from-white/20 to-primary-100/20 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 py-8 max-w-6xl relative z-10">
         {/* Header */}
         <div className="text-center mb-16">
           <div className="relative mb-6">
@@ -165,7 +173,8 @@ export default function Home() {
         </p>
       </div>
       
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }
