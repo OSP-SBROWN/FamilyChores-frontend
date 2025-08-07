@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -9,6 +9,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -52,23 +53,25 @@ function SortableTimezoneCard({ timezone, onEdit, onDelete }: SortableTimezoneCa
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
+    transition: isDragging ? 'none' : transition,
+    opacity: isDragging ? 0.8 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
   };
 
   return (
     <Card
       ref={setNodeRef}
       style={style}
-      className={`timezone-item ${isDragging ? 'dragging' : ''} border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg border border-white/30 cursor-pointer`}
+      className={`timezone-item ${isDragging ? 'dragging' : ''} border-0 shadow-xl transition-all duration-150 bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg border border-white/30 ${isDragging ? 'shadow-2xl scale-105' : 'hover:shadow-2xl hover:-translate-y-1'}`}
     >
       <CardHeader className="flex flex-row items-start gap-4 pb-3">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-3 hover:bg-[#8ECAE6]/30 rounded-xl transition-colors bg-gradient-to-br from-[#8ECAE6]/20 to-[#219EBC]/20"
+          className="touch-manipulation cursor-grab active:cursor-grabbing p-4 hover:bg-[#8ECAE6]/30 rounded-xl transition-colors bg-gradient-to-br from-[#8ECAE6]/20 to-[#219EBC]/20 select-none min-w-[48px] min-h-[48px] flex items-center justify-center"
+          style={{ touchAction: 'none' }}
         >
-          <GripVertical className="w-6 h-6 text-[#219EBC]" />
+          <GripVertical className="w-6 h-6 text-[#219EBC] pointer-events-none" />
         </div>
         <div className="flex flex-col flex-grow">
           <CardTitle className="text-xl font-serif font-bold text-[#023047] mb-1">
@@ -128,8 +131,52 @@ export default function TimezonesPage() {
     description: '',
   });
 
+  // Add custom styles for smoother touch interactions
+  React.useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .timezone-item.dragging * {
+        pointer-events: none;
+      }
+      .timezone-item {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+      }
+      @media (pointer: coarse) {
+        .timezone-item {
+          transform: none !important;
+          transition: none !important;
+        }
+        .timezone-item:hover {
+          transform: none !important;
+        }
+        .timezone-item.dragging {
+          transform: scale(1.02) !important;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -197,7 +244,7 @@ export default function TimezonesPage() {
         await updateMutation.mutateAsync({
           id: editingTimezone.id,
           ...data,
-        } as any);
+        });
       } else {
         await createMutation.mutateAsync(data);
       }
@@ -315,7 +362,7 @@ export default function TimezonesPage() {
                 items={sortedTimezones.map((tz) => tz.id)}
                 strategy={verticalListSortingStrategy}
               >
-                <div className="space-y-6">
+                <div className="space-y-6" style={{ touchAction: 'pan-y' }}>
                   {sortedTimezones.map((timezone) => (
                     <SortableTimezoneCard
                       key={timezone.id}

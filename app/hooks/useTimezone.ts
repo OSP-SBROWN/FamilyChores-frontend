@@ -8,7 +8,9 @@ export function useTimezones() {
   return useQuery({
     queryKey: [TIMEZONE_QUERY_KEY],
     queryFn: TimezoneService.getAll,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds (reduced from 5 minutes)
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 }
 
@@ -26,7 +28,9 @@ export function useCreateTimezone() {
   return useMutation({
     mutationFn: (data: CreateTimezoneDto) => TimezoneService.create(data),
     onSuccess: () => {
+      // More aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
+      queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
     onError: (error) => {
       console.error('Error creating timezone:', error);
@@ -38,9 +42,11 @@ export function useUpdateTimezone() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, ...data }: UpdateTimezoneDto) => TimezoneService.update(id, data),
+    mutationFn: ({ id, ...data }: { id: string } & UpdateTimezoneDto) => TimezoneService.update(id, data),
     onSuccess: () => {
+      // More aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
+      queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
     onError: (error) => {
       console.error('Error updating timezone:', error);
@@ -54,7 +60,9 @@ export function useDeleteTimezone() {
   return useMutation({
     mutationFn: (id: string) => TimezoneService.delete(id),
     onSuccess: () => {
+      // More aggressive cache invalidation
       queryClient.invalidateQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
+      queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
     onError: (error) => {
       console.error('Error deleting timezone:', error);

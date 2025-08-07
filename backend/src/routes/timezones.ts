@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { randomUUID } from 'crypto';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -91,6 +92,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     const timezone = await prisma.timezone.create({
       data: {
+        id: randomUUID(),
         name,
         description: description || null,
         display_order: nextDisplayOrder
