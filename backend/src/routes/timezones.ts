@@ -92,7 +92,6 @@ router.post('/', async (req: Request, res: Response) => {
 
     const timezone = await prisma.timezone.create({
       data: {
-        id: randomUUID(),
         name,
         description: description || null,
         display_order: nextDisplayOrder
