@@ -60,6 +60,12 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
   // Start camera
   const startCamera = async () => {
     try {
+      // Check if camera is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Camera is not supported on this device. Please use file upload instead.');
+        return;
+      }
+
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { 
           width: { ideal: 640 }, 
@@ -78,7 +84,21 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
       }, 100);
     } catch (error) {
       console.error('Error accessing camera:', error);
-      alert('Could not access camera. Please check permissions or use file upload instead.');
+      let message = 'Could not access camera. ';
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          message += 'Please allow camera permissions and try again.';
+        } else if (error.name === 'NotFoundError') {
+          message += 'No camera found on this device.';
+        } else if (error.name === 'NotSupportedError') {
+          message += 'Camera is not supported on this device.';
+        } else {
+          message += 'Please try using file upload instead.';
+        }
+      }
+      
+      alert(message);
     }
   };
 
@@ -175,18 +195,28 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
                 muted
                 className="w-full h-64 object-cover rounded-lg bg-gray-100"
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-40 h-40 border-4 border-white/50 rounded-full"></div>
+              {/* Camera viewfinder overlay */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-40 h-40 border-4 border-white/70 rounded-full shadow-lg">
+                  <div className="w-full h-full border-2 border-white/30 rounded-full"></div>
+                </div>
               </div>
             </div>
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-4 space-x-3">
+              <Button
+                variant="outline"
+                onClick={stopCamera}
+                className="px-6"
+              >
+                Cancel
+              </Button>
               <Button
                 onClick={capturePhoto}
-                className="bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 px-8"
                 size="lg"
               >
                 <Camera className="w-5 h-5 mr-2" />
-                Capture Photo
+                Capture
               </Button>
             </div>
           </CardContent>
@@ -195,26 +225,26 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
 
       {/* Upload Controls */}
       {!isCameraOpen && (
-        <div className="flex gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Button
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="flex-1"
+            className="w-full"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
               <Upload className="w-4 h-4 mr-2" />
             )}
-            Upload from Files
+            Upload Photo
           </Button>
           
           <Button
             variant="outline"
             onClick={startCamera}
             disabled={isUploading}
-            className="flex-1"
+            className="w-full"
           >
             <Camera className="w-4 h-4 mr-2" />
             Take Photo
@@ -222,11 +252,12 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
         </div>
       )}
 
-      {/* Hidden file input */}
+      {/* Hidden file input with mobile camera support */}
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        capture="user" // Suggests front-facing camera on mobile
         onChange={handleFileUpload}
         className="hidden"
       />
