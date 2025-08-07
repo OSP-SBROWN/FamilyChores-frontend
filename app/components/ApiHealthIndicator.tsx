@@ -34,6 +34,11 @@ export default function ApiHealthIndicator() {
     // Check if we're in development mode
     const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
+    // Determine API base URL based on hostname
+    const apiBaseUrl = window.location.hostname === 'chorenest.com' 
+      ? 'https://family-chores-frontend.vercel.app/api'
+      : '/api';
+    
     if (isDevelopment) {
       // In development, show mock status since Vercel API routes don't work locally
       setHealth({
@@ -61,7 +66,8 @@ export default function ApiHealthIndicator() {
     }
     
     try {
-      const response = await fetch('/api/health');
+      console.log('Using API base URL:', apiBaseUrl);
+      const response = await fetch(`${apiBaseUrl}/health`);
       
       // Check if response is actually JSON
       const contentType = response.headers.get('content-type');
