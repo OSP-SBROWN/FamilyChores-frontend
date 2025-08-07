@@ -51,7 +51,7 @@ router.get('/grid', async (req, res) => {
         select: { id: true, name: true, display_name: true },
         orderBy: { display_name: 'asc' }
       }),
-      prisma.timezones.findMany({
+      prisma.timezone.findMany({
         select: { id: true, name: true, display_order: true },
         orderBy: { display_order: 'asc' }
       }),
@@ -74,11 +74,13 @@ router.get('/grid', async (req, res) => {
 
     // Populate grid from availability records
     availabilityRecords.forEach((record: any) => {
-      const personIndex = personIndexMap.get(record.person_id);
-      const dayIndex = dayTypeIndexMap.get(record.day_type_id);
-      const timezoneIndex = timezoneIndexMap.get(record.timezone_id);
+      const personIndex = personIndexMap.get(record.person_id) as number | undefined;
+      const dayIndex = dayTypeIndexMap.get(record.day_type_id) as number | undefined;
+      const timezoneIndex = timezoneIndexMap.get(record.timezone_id) as number | undefined;
 
-      if (personIndex !== undefined && dayIndex !== undefined && timezoneIndex !== undefined) {
+      if (typeof personIndex === 'number' && typeof dayIndex === 'number' && typeof timezoneIndex === 'number' && 
+          personIndex < grid.length && dayIndex < grid[personIndex].length && 
+          timezoneIndex < grid[personIndex][dayIndex].length) {
         grid[personIndex][dayIndex][timezoneIndex] = record.is_available;
       }
     });
@@ -116,7 +118,7 @@ router.get('/compact', async (req, res) => {
         select: { id: true, name: true, display_name: true },
         orderBy: { display_name: 'asc' }
       }),
-      prisma.timezones.findMany({
+      prisma.timezone.findMany({
         select: { id: true, name: true, display_order: true },
         orderBy: { display_order: 'asc' }
       }),
