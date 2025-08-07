@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use Railway API endpoint
-const API_BASE_URL = 'https://familychores-frontend-production.up.railway.app/api';
+export const API_BASE_URL = 'https://familychores-frontend-production.up.railway.app/api';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
