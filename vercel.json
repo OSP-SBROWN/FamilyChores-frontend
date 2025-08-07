@@ -1,9 +1,17 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "build",
+  "functions": {
+    "api/health.ts": {
+      "runtime": "@vercel/node"
+    },
+    "api/test.ts": {
+      "runtime": "@vercel/node"
+    }
+  },
   "rewrites": [
     {
-      "source": "/((?!api).*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]
