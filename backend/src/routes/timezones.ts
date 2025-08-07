@@ -11,7 +11,7 @@ router.get('/', async (req: Request, res: Response) => {
     
     const timezones = await prisma.timezone.findMany({
       orderBy: {
-        sortOrder: 'asc'
+        display_order: 'asc'
       }
     });
 
@@ -41,7 +41,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     console.log(`GET /api/timezones/${id} - Fetching timezone`);
 
     const timezone = await prisma.timezone.findUnique({
-      where: { id: parseInt(id) }
+      where: { id: id }
     });
 
     if (!timezone) {
@@ -71,31 +71,29 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/timezones - Create new timezone
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { name, abbreviation, offset, region } = req.body;
-    console.log('POST /api/timezones - Creating timezone:', { name, abbreviation, offset, region });
+    const { name, description } = req.body;
+    console.log('POST /api/timezones - Creating timezone:', { name, description });
 
     // Validate required fields
-    if (!name || !abbreviation || offset === undefined) {
+    if (!name) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: name, abbreviation, offset',
+        error: 'Missing required field: name',
         timestamp: new Date().toISOString()
       });
     }
 
-    // Get the next sort order
-    const maxSortOrder = await prisma.timezone.aggregate({
-      _max: { sortOrder: true }
+    // Get the next display order
+    const maxDisplayOrder = await prisma.timezone.aggregate({
+      _max: { display_order: true }
     });
-    const nextSortOrder = (maxSortOrder._max.sortOrder || 0) + 1;
+    const nextDisplayOrder = (maxDisplayOrder._max.display_order || 0) + 1;
 
     const timezone = await prisma.timezone.create({
       data: {
         name,
-        abbreviation,
-        offset: parseFloat(offset),
-        region: region || null,
-        sortOrder: nextSortOrder
+        description: description || null,
+        display_order: nextDisplayOrder
       }
     });
 
@@ -122,16 +120,14 @@ router.post('/', async (req: Request, res: Response) => {
 router.put('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, abbreviation, offset, region } = req.body;
-    console.log(`PUT /api/timezones/${id} - Updating timezone:`, { name, abbreviation, offset, region });
+    const { name, description } = req.body;
+    console.log(`PUT /api/timezones/${id} - Updating timezone:`, { name, description });
 
     const timezone = await prisma.timezone.update({
-      where: { id: parseInt(id) },
+      where: { id: id },
       data: {
         name,
-        abbreviation,
-        offset: offset ? parseFloat(offset) : undefined,
-        region: region || null
+        description: description || null
       }
     });
 
@@ -170,7 +166,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     console.log(`DELETE /api/timezones/${id} - Deleting timezone`);
 
     await prisma.timezone.delete({
-      where: { id: parseInt(id) }
+      where: { id: id }
     });
 
     console.log(`Deleted timezone ${id}`);
@@ -214,12 +210,12 @@ router.post('/reorder', async (req: Request, res: Response) => {
       });
     }
 
-    // Update sort orders in a transaction
+    // Update display orders in a transaction
     await prisma.$transaction(
       timezones.map((timezone, index) =>
         prisma.timezone.update({
           where: { id: timezone.id },
-          data: { sortOrder: index }
+          data: { display_order: index }
         })
       )
     );
