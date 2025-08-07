@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import healthRouter from './routes/health';
+import timezonesRouter from './routes/timezones';
 
 // Load environment variables
 dotenv.config();
@@ -40,6 +41,9 @@ app.use((req, res, next) => {
 // Health check route
 app.use('/api/health', healthRouter);
 
+// Timezones API routes
+app.use('/api/timezones', timezonesRouter);
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
@@ -49,6 +53,7 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
     endpoints: {
       health: '/api/health',
+      timezones: '/api/timezones',
       docs: '/api/docs'
     }
   });
