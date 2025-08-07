@@ -100,7 +100,7 @@ model people {
   date_of_birth                                           DateTime?                  @db.Date
   color_code                                              String                     @db.VarChar(7)
   workload_weighting                                      Decimal                    @default(1.00) @db.Decimal(3, 2)
-  photo_url                                               String?                    @db.VarChar(255)
+  photo_url                                               String?                    @db.Text
   created_by                                              String?                    @db.Uuid
   created_at                                              DateTime                   @default(now())
   updated_at                                              DateTime
