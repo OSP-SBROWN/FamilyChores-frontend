@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { Card, CardContent } from './ui/card';
 import { Upload, Camera, X, Check, Loader2 } from 'lucide-react';
+import ImageCropper from './ImageCropper';
 
 interface PhotoUploadProps {
   currentPhoto?: string;
@@ -13,6 +14,8 @@ interface PhotoUploadProps {
 export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 'Person' }: PhotoUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [isCropping, setIsCropping] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string>('');
   const [stream, setStream] = useState<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -39,16 +42,17 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
       return;
     }
 
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size must be less than 5MB');
+    // Validate file size (10MB max for processing)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
       return;
     }
 
     setIsUploading(true);
     try {
       const dataUrl = await fileToDataURL(file);
-      onPhotoChange(dataUrl);
+      setImageToCrop(dataUrl);
+      setIsCropping(true);
     } catch (error) {
       console.error('Error uploading file:', error);
       alert('Error uploading image. Please try again.');
@@ -129,9 +133,12 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
     ctx.drawImage(video, 0, 0);
 
     // Convert canvas to data URL
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-    onPhotoChange(dataUrl);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    
+    // Stop camera and open cropper
     stopCamera();
+    setImageToCrop(dataUrl);
+    setIsCropping(true);
   };
 
   // Remove photo
@@ -141,6 +148,33 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
       fileInputRef.current.value = '';
     }
   };
+
+  // Handle crop completion
+  const handleCropComplete = (croppedImageUrl: string) => {
+    onPhotoChange(croppedImageUrl);
+    setIsCropping(false);
+    setImageToCrop('');
+  };
+
+  // Handle crop cancel
+  const handleCropCancel = () => {
+    setIsCropping(false);
+    setImageToCrop('');
+  };
+
+  // Show cropper if in cropping mode
+  if (isCropping && imageToCrop) {
+    return (
+      <div className="space-y-4">
+        <Label htmlFor="photo">Photo</Label>
+        <ImageCropper
+          imageSrc={imageToCrop}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -269,7 +303,7 @@ export default function PhotoUpload({ currentPhoto, onPhotoChange, personName = 
       />
 
       <p className="text-xs text-gray-500">
-        Upload an image file or take a photo with your camera. Maximum size: 5MB.
+        Upload an image file or take a photo with your camera. You'll be able to crop and position the image. Maximum size: 10MB.
       </p>
     </div>
   );
