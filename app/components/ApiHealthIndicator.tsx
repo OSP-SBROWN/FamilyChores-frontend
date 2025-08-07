@@ -30,8 +30,49 @@ export default function ApiHealthIndicator() {
 
   const checkHealth = async () => {
     setLoading(true);
+    
+    // Check if we're in development mode
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (isDevelopment) {
+      // In development, show mock status since Vercel API routes don't work locally
+      setHealth({
+        success: true,
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0',
+        environment: 'development',
+        database: {
+          status: 'connected',
+          responseTime: '< 100ms',
+          provider: 'Neon',
+          host: 'localhost (mocked)'
+        },
+        stats: {
+          timezones: 0,
+          users: 1
+        },
+        uptime: 'Development Mode',
+        error: undefined
+      });
+      setLastChecked(new Date());
+      setLoading(false);
+      return;
+    }
+    
     try {
       const response = await fetch('/api/health');
+      
+      // Check if response is actually JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('API endpoint returned HTML instead of JSON');
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       setHealth(data);
       setLastChecked(new Date());
@@ -41,7 +82,7 @@ export default function ApiHealthIndicator() {
         success: false,
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
-        error: 'Failed to connect to API',
+        error: error instanceof Error ? error.message : 'Failed to connect to API',
       });
       setLastChecked(new Date());
     } finally {
@@ -171,7 +212,19 @@ export default function ApiHealthIndicator() {
         {health?.environment && (
           <div className="text-xs text-gray-500 flex justify-between">
             <span>v{health.version || '1.0.0'}</span>
-            <span>{health.environment}</span>
+            <span className={health.environment === 'development' ? 'text-blue-600 font-medium' : ''}>
+              {health.environment}
+            </span>
+          </div>
+        )}
+
+        {/* Development Notice */}
+        {health?.environment === 'development' && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <p className="text-blue-700 text-sm">
+              🔧 <strong>Development Mode:</strong> API routes are mocked locally. 
+              Deploy to Vercel to test real API endpoints.
+            </p>
           </div>
         )}
       </CardContent>
