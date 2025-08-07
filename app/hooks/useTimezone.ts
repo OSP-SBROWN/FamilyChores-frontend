@@ -66,7 +66,7 @@ export function useDeleteTimezone() {
       return result;
     },
     onSuccess: (_, deletedId) => {
-      console.log('Successfully deleted timezone:', deletedId);
+      console.log('Successfully deleted timezone and all related data:', deletedId);
       
       // Remove from cache immediately for optimistic update
       queryClient.setQueryData([TIMEZONE_QUERY_KEY], (old: Timezone[] | undefined) => {
@@ -74,12 +74,22 @@ export function useDeleteTimezone() {
         return old.filter(timezone => timezone.id !== deletedId);
       });
       
-      // Also invalidate and refetch to ensure consistency
+      // Invalidate availability data since it may have changed
+      queryClient.invalidateQueries({ queryKey: ['availability'] });
+      queryClient.invalidateQueries({ queryKey: ['availability-compact'] });
+      
+      // Also invalidate and refetch timezone data to ensure consistency
       queryClient.invalidateQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
       queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error deleting timezone:', error);
+      
+      // Provide specific error message for foreign key constraints
+      if (error?.message?.includes('constraint') || error?.message?.includes('foreign key')) {
+        console.error('Foreign key constraint error - timezone has related data');
+      }
+      
       // Refetch to ensure UI is in sync with server
       queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
