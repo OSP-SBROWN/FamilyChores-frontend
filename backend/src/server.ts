@@ -52,7 +52,7 @@ app.use('/api/people', peopleRouter);
 app.get('/', (req, res) => {
   res.json({
     name: 'ChoreNest API',
-    version: '1.0.0',
+    version: '1.0.1', // Updated for database schema changes
     status: 'running',
     timestamp: new Date().toISOString(),
     endpoints: {
