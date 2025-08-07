@@ -5,38 +5,24 @@ import { randomUUID } from 'crypto';
 const router = Router();
 const prisma = new PrismaClient();
 
-// GET /api/people - Get all people
+// GET /api/people - Get all people (using raw SQL to bypass cache)
 router.get('/', async (req: Request, res: Response) => {
   try {
-    console.log('GET /api/people - Fetching all people');
+    console.log('GET /api/people - Fetching all people with raw SQL');
     
-    // Try the query, and if it fails due to cached plan, force a new connection
-    let people;
-    try {
-      people = await prisma.people.findMany({
-        orderBy: {
-          name: 'asc'
-        }
-      });
-    } catch (error) {
-      // If we get a cached plan error, try to restart the connection
-      console.log('First query failed, attempting connection reset');
-      await prisma.$disconnect();
-      await prisma.$connect();
-      
-      people = await prisma.people.findMany({
-        orderBy: {
-          name: 'asc'
-        }
-      });
-    }
+    // Use raw SQL to bypass cached plans
+    const people = await prisma.$queryRaw`
+      SELECT id, name, date_of_birth, color_code, workload_weighting, photo_url, created_by, created_at, updated_at 
+      FROM people 
+      ORDER BY name ASC
+    `;
 
-    console.log(`Found ${people.length} people`);
+    console.log(`Found ${Array.isArray(people) ? people.length : 0} people`);
 
     res.json({
       success: true,
       data: people,
-      count: people.length,
+      count: Array.isArray(people) ? people.length : 0,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
