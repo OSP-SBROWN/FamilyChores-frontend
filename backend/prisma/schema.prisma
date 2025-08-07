@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Timezone {
+  id                  String                @id @default(cuid()) @db.Uuid
+  name                String                @db.VarChar(100)
+  display_order       Int
+  description         String?
+  created_at          DateTime              @default(now())
+  chore_assignments   chore_assignments[]
+  chore_timezones     chore_timezones[]
+  people_availability people_availability[]
+
+  @@map("timezones")
+}
+
+model calendar_overrides {
+  id          String    @id @db.Uuid
+  person_id   String    @db.Uuid
+  date        DateTime  @db.Date
+  day_type_id String    @db.Uuid
+  day_types   day_types @relation(fields: [day_type_id], references: [id])
+  people      people    @relation(fields: [person_id], references: [id], onDelete: Cascade)
+
+  @@unique([person_id, date])
+}
+
+model chore_assignments {
+  id                                           String    @id @db.Uuid
+  chore_id                                     String    @db.Uuid
+  assigned_to                                  String    @db.Uuid
+  helper_id                                    String?   @db.Uuid
+  scheduled_date                               DateTime  @db.Date
+  timezone_id                                  String    @db.Uuid
+  status                                       String    @default("pending") @db.VarChar(20)
+  completed_at                                 DateTime?
+  notes                                        String?
+  created_at                                   DateTime  @default(now())
+  updated_at                                   DateTime
+  people_chore_assignments_assigned_toTopeople people    @relation("chore_assignments_assigned_toTopeople", fields: [assigned_to], references: [id])
+  chores                                       chores    @relation(fields: [chore_id], references: [id])
+  people_chore_assignments_helper_idTopeople   people?   @relation("chore_assignments_helper_idTopeople", fields: [helper_id], references: [id])
+  timezones                                    Timezone  @relation(fields: [timezone_id], references: [id])
+}
+
+model chore_person_abilities {
+  id            String @id @db.Uuid
+  chore_id      String @db.Uuid
+  person_id     String @db.Uuid
+  ability_level String @db.VarChar(20)
+  chores        chores @relation(fields: [chore_id], references: [id], onDelete: Cascade)
+  people        people @relation(fields: [person_id], references: [id], onDelete: Cascade)
+
+  @@unique([chore_id, person_id])
+}
+
+model chore_timezones {
+  id          String   @id @db.Uuid
+  chore_id    String   @db.Uuid
+  timezone_id String   @db.Uuid
+  is_required Boolean  @default(false)
+  chores      chores   @relation(fields: [chore_id], references: [id], onDelete: Cascade)
+  timezones   Timezone @relation(fields: [timezone_id], references: [id])
+
+  @@unique([chore_id, timezone_id])
+}
+
+model chores {
+  id                     String                   @id @db.Uuid
+  name                   String                   @db.VarChar(200)
+  description            String?
+  frequency              String                   @db.VarChar(50)
+  estimated_minutes      Int?
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime
+  chore_assignments      chore_assignments[]
+  chore_person_abilities chore_person_abilities[]
+  chore_timezones        chore_timezones[]
+  workload_history       workload_history[]
+}
+
+model day_types {
+  id                       String                     @id @db.Uuid
+  name                     String                     @db.VarChar(50)
+  display_name             String                     @db.VarChar(100)
+  calendar_overrides       calendar_overrides[]
+  people_availability      people_availability[]
+  people_calendar_defaults people_calendar_defaults[]
+}
+
+model people {
+  id                                                      String                     @id @db.Uuid
+  name                                                    String                     @db.VarChar(100)
+  date_of_birth                                           DateTime?                  @db.Date
+  color_code                                              String                     @db.VarChar(7)
+  workload_weighting                                      Decimal                    @default(1.00) @db.Decimal(3, 2)
+  photo_url                                               String?                    @db.VarChar(255)
+  created_by                                              String?                    @db.Uuid
+  created_at                                              DateTime                   @default(now())
+  updated_at                                              DateTime
+  calendar_overrides                                      calendar_overrides[]
+  chore_assignments_chore_assignments_assigned_toTopeople chore_assignments[]        @relation("chore_assignments_assigned_toTopeople")
+  chore_assignments_chore_assignments_helper_idTopeople   chore_assignments[]        @relation("chore_assignments_helper_idTopeople")
+  chore_person_abilities                                  chore_person_abilities[]
+  users                                                   users?                     @relation(fields: [created_by], references: [id])
+  people_availability                                     people_availability[]
+  people_calendar_defaults                                people_calendar_defaults[]
+  workload_history                                        workload_history[]
+}
+
+model people_availability {
+  id           String    @id @db.Uuid
+  person_id    String    @db.Uuid
+  day_type_id  String    @db.Uuid
+  timezone_id  String    @db.Uuid
+  is_available Boolean   @default(true)
+  day_types    day_types @relation(fields: [day_type_id], references: [id])
+  people       people    @relation(fields: [person_id], references: [id], onDelete: Cascade)
+  timezones    Timezone  @relation(fields: [timezone_id], references: [id])
+
+  @@unique([person_id, day_type_id, timezone_id])
+}
+
+model people_calendar_defaults {
+  id          String    @id @db.Uuid
+  person_id   String    @db.Uuid
+  day_of_week Int
+  day_type_id String    @db.Uuid
+  day_types   day_types @relation(fields: [day_type_id], references: [id])
+  people      people    @relation(fields: [person_id], references: [id], onDelete: Cascade)
+
+  @@unique([person_id, day_of_week])
+}
+
+model users {
+  id            String   @id @db.Uuid
+  username      String   @unique @db.VarChar(50)
+  email         String   @unique @db.VarChar(255)
+  password_hash String   @db.VarChar(255)
+  role          String   @default("member") @db.VarChar(20)
+  created_at    DateTime @default(now())
+  updated_at    DateTime
+  people        people[]
+}
+
+model workload_history {
+  id            String   @id @db.Uuid
+  person_id     String   @db.Uuid
+  chore_id      String   @db.Uuid
+  date          DateTime @db.Date
+  points_earned Decimal  @db.Decimal(5, 2)
+  created_at    DateTime @default(now())
+  chores        chores   @relation(fields: [chore_id], references: [id])
+  people        people   @relation(fields: [person_id], references: [id])
+}
