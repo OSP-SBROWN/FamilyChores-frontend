@@ -26,8 +26,6 @@ import {
   Edit3,
   Trash2,
   GripVertical,
-  CheckCircle,
-  XCircle,
   Loader2,
   X,
 } from 'lucide-react';
@@ -80,31 +78,12 @@ function SortableTimezoneCard({ timezone, onEdit, onDelete }: SortableTimezoneCa
             <p className="text-sm text-[#219EBC]/80">{timezone.description}</p>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          {timezone.isActive ? (
-            <div className="flex items-center gap-2 bg-green-100 px-3 py-1 rounded-full">
-              <CheckCircle className="w-4 h-4 text-green-600" />
-              <span className="text-xs font-medium text-green-700">Active</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full">
-              <XCircle className="w-4 h-4 text-gray-500" />
-              <span className="text-xs font-medium text-gray-600">Inactive</span>
-            </div>
-          )}
-        </div>
       </CardHeader>
       <CardContent className="pt-0">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-6 text-sm">
-            {timezone.startTime && timezone.endTime && (
-              <div className="flex items-center gap-2 bg-[#8ECAE6]/30 px-3 py-2 rounded-lg backdrop-blur-sm">
-                <Clock className="w-4 h-4 text-[#219EBC]" />
-                <span className="font-medium text-[#023047]">{timezone.startTime} - {timezone.endTime}</span>
-              </div>
-            )}
             <div className="flex items-center gap-2 bg-[#023047]/20 px-3 py-2 rounded-lg backdrop-blur-sm">
-              <span className="text-xs font-medium text-[#023047]">Order: {timezone.order}</span>
+              <span className="text-xs font-medium text-[#023047]">Order: {timezone.display_order}</span>
             </div>
           </div>
           <div className="flex gap-2">
@@ -134,9 +113,6 @@ function SortableTimezoneCard({ timezone, onEdit, onDelete }: SortableTimezoneCa
 interface TimezoneFormData {
   name: string;
   description: string;
-  startTime: string;
-  endTime: string;
-  isActive: boolean;
 }
 
 export default function TimezonesPage() {
@@ -150,9 +126,6 @@ export default function TimezonesPage() {
   const [formData, setFormData] = useState<TimezoneFormData>({
     name: '',
     description: '',
-    startTime: '',
-    endTime: '',
-    isActive: true,
   });
 
   const sensors = useSensors(
@@ -164,7 +137,7 @@ export default function TimezonesPage() {
 
   const sortedTimezones = useMemo(() => {
     if (!timezones) return [];
-    return [...timezones].sort((a, b) => a.order - b.order);
+    return [...timezones].sort((a, b) => a.display_order - b.display_order);
   }, [timezones]);
 
   const handleDragEnd = (event: any) => {
@@ -176,13 +149,13 @@ export default function TimezonesPage() {
 
       const newTimezones = arrayMove(sortedTimezones, oldIndex, newIndex);
       
-      // Update order values
+      // Update display_order values
       const updatedTimezones = newTimezones.map((timezone, index) => ({
         id: timezone.id,
-        order: index + 1,
+        display_order: index + 1,
       }));
 
-      // Here you would call an API to update the order
+      // Here you would call the reorder API
       console.log('Updated timezone order:', updatedTimezones);
     }
   };
@@ -193,18 +166,12 @@ export default function TimezonesPage() {
       setFormData({
         name: timezone.name,
         description: timezone.description || '',
-        startTime: timezone.startTime || '',
-        endTime: timezone.endTime || '',
-        isActive: timezone.isActive,
       });
     } else {
       setEditingTimezone(null);
       setFormData({
         name: '',
         description: '',
-        startTime: '',
-        endTime: '',
-        isActive: true,
       });
     }
     setIsModalOpen(true);
@@ -215,9 +182,6 @@ export default function TimezonesPage() {
     setFormData({
       name: '',
       description: '',
-      startTime: '',
-      endTime: '',
-      isActive: true,
     });
     setIsModalOpen(false);
   };
@@ -227,21 +191,15 @@ export default function TimezonesPage() {
       const data = {
         name: formData.name,
         description: formData.description || undefined,
-        startTime: formData.startTime || undefined,
-        endTime: formData.endTime || undefined,
-        isActive: formData.isActive,
       };
 
       if (editingTimezone) {
         await updateMutation.mutateAsync({
           id: editingTimezone.id,
           ...data,
-        });
+        } as any);
       } else {
-        await createMutation.mutateAsync({
-          ...data,
-          order: (sortedTimezones.length + 1),
-        });
+        await createMutation.mutateAsync(data);
       }
 
       handleCloseModal();
@@ -280,7 +238,7 @@ export default function TimezonesPage() {
           <Card className="p-8 shadow-xl border-0 bg-white/90 backdrop-blur-sm border border-red-200">
             <CardContent className="text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <XCircle className="w-8 h-8 text-red-500" />
+                <X className="w-8 h-8 text-red-500" />
               </div>
               <p className="text-red-600 font-medium text-lg">Error loading timezones</p>
               <p className="text-red-500 mt-2">{error.message}</p>
@@ -421,52 +379,6 @@ export default function TimezonesPage() {
                           setFormData((prev) => ({ ...prev, description: e.target.value }))
                         }
                       />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="startTime">Start Time</Label>
-                        <Input
-                          id="startTime"
-                          type="time"
-                          value={formData.startTime}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, startTime: e.target.value }))
-                          }
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="endTime">End Time</Label>
-                        <Input
-                          id="endTime"
-                          type="time"
-                          value={formData.endTime}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, endTime: e.target.value }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                      <div>
-                        <h4 className="font-medium">Active Status</h4>
-                        <p className="text-sm text-gray-500">
-                          Enable this timezone for task scheduling
-                        </p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          className="sr-only peer"
-                          checked={formData.isActive}
-                          onChange={(e) =>
-                            setFormData((prev) => ({ ...prev, isActive: e.target.checked }))
-                          }
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#219EBC]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#219EBC]"></div>
-                      </label>
                     </div>
 
                     <div className="flex gap-3 pt-4">

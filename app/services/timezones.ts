@@ -26,12 +26,8 @@ export class TimezoneService {
     await api.delete(`/timezones/${id}`);
   }
 
-  static async updateOrder(timezones: { id: string; order: number }[]): Promise<void> {
-    // Batch update the order of timezones
-    await Promise.all(
-      timezones.map(tz => 
-        api.put(`/timezones/${tz.id}`, { order: tz.order })
-      )
-    );
+  static async updateOrder(timezones: { id: string; display_order: number }[]): Promise<void> {
+    // Use the reorder endpoint
+    await api.post('/timezones/reorder', { timezones });
   }
 }
