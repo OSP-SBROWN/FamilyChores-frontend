@@ -79,11 +79,11 @@ export default function Home() {
                   their chore completion history.
                 </p>
                 <Button
-                  className="w-full bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-white font-semibold shadow-lg opacity-70 cursor-not-allowed"
+                  asChild
+                  className="w-full bg-gradient-to-r from-[#FFB703] to-[#FB8500] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   size="lg"
-                  disabled
                 >
-                  Coming Soon
+                  <Link to="/people">Manage People</Link>
                 </Button>
               </CardContent>
             </Card>
