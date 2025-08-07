@@ -88,7 +88,32 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm border border-[#219EBC]/30 md:col-span-2 lg:col-span-1">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm border border-[#219EBC]/30">
+              <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                <div className="p-3 bg-gradient-to-br from-[#219EBC] to-[#8ECAE6] rounded-xl shadow-lg">
+                  <CheckSquare className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="text-xl font-serif font-bold text-[#023047]">Availability Matrix</h3>
+                  <p className="text-sm text-[#219EBC]/80">Schedule management</p>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-2">
+                <p className="text-[#023047]/90 mb-6 leading-relaxed">
+                  Set when people are available across different days and time periods 
+                  with an interactive grid interface.
+                </p>
+                <Button
+                  asChild
+                  className="w-full bg-gradient-to-r from-[#219EBC] to-[#8ECAE6] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  size="lg"
+                >
+                  <Link to="/availability">Manage Availability</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm border border-[#219EBC]/30 md:col-span-2 lg:col-span-3">
               <CardHeader className="flex flex-row items-center gap-4 pb-2">
                 <div className="p-3 bg-gradient-to-br from-[#219EBC] to-[#023047] rounded-xl shadow-lg">
                   <Calendar className="w-7 h-7 text-white" />

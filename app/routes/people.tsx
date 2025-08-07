@@ -3,6 +3,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
   Plus,
   Users,
@@ -14,12 +15,14 @@ import {
   Calendar,
   Palette,
   Weight,
+  Clock,
 } from 'lucide-react';
 
 import { usePeople, useCreatePerson, useUpdatePerson, useDeletePerson } from '../hooks/usePeople';
 import type { Person, CreatePersonDto, UpdatePersonDto, PersonFormData } from '../types/person';
 import AppLayout from '../components/AppLayout';
 import PhotoUpload from '../components/PhotoUpload';
+import { PersonAvailabilityMatrix } from '../components/PersonAvailabilityMatrix';
 
 // Predefined color options for people
 const COLOR_OPTIONS = [
@@ -325,14 +328,14 @@ export default function PeoplePage() {
               
               {/* Modal Content */}
               <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                <Card className="w-full max-w-2xl bg-white shadow-2xl max-h-[90vh] overflow-y-auto">
+                <Card className="w-full max-w-4xl bg-white shadow-2xl max-h-[90vh] overflow-y-auto">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                       <CardTitle className="text-2xl font-serif font-bold">
                         {editingPerson ? 'Edit Family Member' : 'Add New Family Member'}
                       </CardTitle>
                       <p className="text-sm text-gray-500 mt-1">
-                        Manage family member information and preferences
+                        Manage family member information, preferences, and availability schedule
                       </p>
                     </div>
                     <Button variant="ghost" size="sm" onClick={handleCloseModal}>
@@ -340,82 +343,119 @@ export default function PeoplePage() {
                     </Button>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name *</Label>
-                      <Input
-                        id="name"
-                        placeholder="e.g., John Smith"
-                        value={formData.name}
-                        onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, name: e.target.value }))
-                        }
-                        required
-                      />
-                    </div>
+                    <Tabs defaultValue="basic" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="basic" className="flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          Basic Info
+                        </TabsTrigger>
+                        <TabsTrigger 
+                          value="availability" 
+                          className="flex items-center gap-2"
+                          disabled={!editingPerson}
+                        >
+                          <Clock className="w-4 h-4" />
+                          Availability
+                          {!editingPerson && (
+                            <span className="text-xs text-gray-400 ml-1">(Save first)</span>
+                          )}
+                        </TabsTrigger>
+                      </TabsList>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="date_of_birth">Date of Birth</Label>
-                      <Input
-                        id="date_of_birth"
-                        type="date"
-                        value={formData.date_of_birth}
-                        onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, date_of_birth: e.target.value }))
-                        }
-                      />
-                    </div>
+                      <TabsContent value="basic" className="space-y-6 mt-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Name *</Label>
+                          <Input
+                            id="name"
+                            placeholder="e.g., John Smith"
+                            value={formData.name}
+                            onChange={(e) =>
+                              setFormData((prev) => ({ ...prev, name: e.target.value }))
+                            }
+                            required
+                          />
+                        </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="workload_weighting">Workload Weighting</Label>
-                      <Input
-                        id="workload_weighting"
-                        type="number"
-                        step="0.1"
-                        min="0.1"
-                        max="5.0"
-                        placeholder="1.0"
-                        value={formData.workload_weighting}
-                        onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, workload_weighting: e.target.value }))
-                        }
-                      />
-                      <p className="text-xs text-gray-500">
-                        Higher values mean this person can handle more chores (0.1 to 5.0)
-                      </p>
-                    </div>
-
-                    <PhotoUpload
-                      currentPhoto={formData.photo_url}
-                      onPhotoChange={(photoUrl) =>
-                        setFormData((prev) => ({ ...prev, photo_url: photoUrl }))
-                      }
-                      personName={formData.name || 'New Person'}
-                    />
-
-                    <div className="space-y-2">
-                      <Label>Color</Label>
-                      <div className="grid grid-cols-8 gap-2">
-                        {COLOR_OPTIONS.map((color) => (
-                          <button
-                            key={color}
-                            className={`w-8 h-8 rounded-full border-2 transition-all duration-200 ${
-                              formData.color_code === color
-                                ? 'border-[#023047] scale-110 shadow-lg'
-                                : 'border-gray-300 hover:scale-105'
-                            }`}
-                            style={{ backgroundColor: color }}
-                            onClick={() =>
-                              setFormData((prev) => ({ ...prev, color_code: color }))
+                        <div className="space-y-2">
+                          <Label htmlFor="date_of_birth">Date of Birth</Label>
+                          <Input
+                            id="date_of_birth"
+                            type="date"
+                            value={formData.date_of_birth}
+                            onChange={(e) =>
+                              setFormData((prev) => ({ ...prev, date_of_birth: e.target.value }))
                             }
                           />
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        This color will be used throughout the app to identify this person
-                      </p>
-                    </div>
+                        </div>
 
-                    <div className="flex gap-3 pt-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="workload_weighting">Workload Weighting</Label>
+                          <Input
+                            id="workload_weighting"
+                            type="number"
+                            step="0.1"
+                            min="0.1"
+                            max="5.0"
+                            placeholder="1.0"
+                            value={formData.workload_weighting}
+                            onChange={(e) =>
+                              setFormData((prev) => ({ ...prev, workload_weighting: e.target.value }))
+                            }
+                          />
+                          <p className="text-xs text-gray-500">
+                            Higher values mean this person can handle more chores (0.1 to 5.0)
+                          </p>
+                        </div>
+
+                        <PhotoUpload
+                          currentPhoto={formData.photo_url}
+                          onPhotoChange={(photoUrl) =>
+                            setFormData((prev) => ({ ...prev, photo_url: photoUrl }))
+                          }
+                          personName={formData.name || 'New Person'}
+                        />
+
+                        <div className="space-y-2">
+                          <Label>Color</Label>
+                          <div className="grid grid-cols-8 gap-2">
+                            {COLOR_OPTIONS.map((color) => (
+                              <button
+                                key={color}
+                                className={`w-8 h-8 rounded-full border-2 transition-all duration-200 ${
+                                  formData.color_code === color
+                                    ? 'border-[#023047] scale-110 shadow-lg'
+                                    : 'border-gray-300 hover:scale-105'
+                                }`}
+                                style={{ backgroundColor: color }}
+                                onClick={() =>
+                                  setFormData((prev) => ({ ...prev, color_code: color }))
+                                }
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            This color will be used throughout the app to identify this person
+                          </p>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="availability" className="mt-6">
+                        {editingPerson ? (
+                          <PersonAvailabilityMatrix 
+                            personId={editingPerson.id}
+                            personName={editingPerson.name}
+                          />
+                        ) : (
+                          <div className="text-center py-12 text-gray-500">
+                            <Clock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                            <h3 className="text-lg font-medium mb-2">Availability Not Available</h3>
+                            <p>Please save the person first, then you can set their availability schedule.</p>
+                          </div>
+                        )}
+                      </TabsContent>
+                    </Tabs>
+
+                    <div className="flex gap-3 pt-4 border-t border-gray-200">
                       <Button variant="outline" onClick={handleCloseModal} className="flex-1">
                         Cancel
                       </Button>
