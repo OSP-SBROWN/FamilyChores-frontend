@@ -10,11 +10,26 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     console.log('GET /api/people - Fetching all people');
     
-    const people = await prisma.people.findMany({
-      orderBy: {
-        name: 'asc'
-      }
-    });
+    // Try the query, and if it fails due to cached plan, force a new connection
+    let people;
+    try {
+      people = await prisma.people.findMany({
+        orderBy: {
+          name: 'asc'
+        }
+      });
+    } catch (error) {
+      // If we get a cached plan error, try to restart the connection
+      console.log('First query failed, attempting connection reset');
+      await prisma.$disconnect();
+      await prisma.$connect();
+      
+      people = await prisma.people.findMany({
+        orderBy: {
+          name: 'asc'
+        }
+      });
+    }
 
     console.log(`Found ${people.length} people`);
 
