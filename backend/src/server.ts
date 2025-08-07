@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import healthRouter from './routes/health';
 import timezonesRouter from './routes/timezones';
+import peopleRouter from './routes/people';
 
 // Load environment variables
 dotenv.config();
@@ -44,6 +45,9 @@ app.use('/api/health', healthRouter);
 // Timezones API routes
 app.use('/api/timezones', timezonesRouter);
 
+// People API routes
+app.use('/api/people', peopleRouter);
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
@@ -54,6 +58,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/api/health',
       timezones: '/api/timezones',
+      people: '/api/people',
       docs: '/api/docs'
     }
   });
