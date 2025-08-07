@@ -31,7 +31,7 @@ import {
   X,
 } from 'lucide-react';
 
-import { useTimezones, useCreateTimezone, useUpdateTimezone, useDeleteTimezone } from '../hooks/useTimezone';
+import { useTimezones, useCreateTimezone, useUpdateTimezone, useDeleteTimezone, useUpdateTimezoneOrder } from '../hooks/useTimezone';
 import type { Timezone, CreateTimezoneDto, UpdateTimezoneDto } from '../types/timezone';
 import AppLayout from '../components/AppLayout';
 
@@ -123,6 +123,7 @@ export default function TimezonesPage() {
   const createMutation = useCreateTimezone();
   const updateMutation = useUpdateTimezone();
   const deleteMutation = useDeleteTimezone();
+  const updateOrderMutation = useUpdateTimezoneOrder();
 
   const [editingTimezone, setEditingTimezone] = useState<Timezone | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -187,7 +188,7 @@ export default function TimezonesPage() {
     return [...timezones].sort((a, b) => a.display_order - b.display_order);
   }, [timezones]);
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = async (event: any) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -202,8 +203,12 @@ export default function TimezonesPage() {
         display_order: index + 1,
       }));
 
-      // Here you would call the reorder API
-      console.log('Updated timezone order:', updatedTimezones);
+      try {
+        await updateOrderMutation.mutateAsync(updatedTimezones);
+        console.log('Successfully updated timezone order');
+      } catch (error) {
+        console.error('Failed to update timezone order:', error);
+      }
     }
   };
 

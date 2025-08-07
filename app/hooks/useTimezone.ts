@@ -78,6 +78,7 @@ export function useUpdateTimezoneOrder() {
       TimezoneService.updateOrder(timezones),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
+      queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
     onError: (error) => {
       console.error('Error updating timezone order:', error);
