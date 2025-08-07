@@ -19,13 +19,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const startTime = Date.now();
 
   try {
-    // Test database connection
-    const dbTest = await prisma.$queryRaw`SELECT 1 as test`;
+    console.log('Health check starting...');
+    console.log('DATABASE_URL configured:', !!process.env.DATABASE_URL);
+    
+    // Test database connection with a simple query
+    await prisma.$queryRaw`SELECT 1 as test`;
     const dbConnectionTime = Date.now() - startTime;
+    console.log('Database connection successful');
 
     // Get some basic stats
     const timezoneCount = await prisma.timezone.count();
     const userCount = await prisma.users.count();
+    console.log('Stats retrieved - timezones:', timezoneCount, 'users:', userCount);
 
     return res.status(200).json({
       success: true,
