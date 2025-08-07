@@ -14,12 +14,12 @@ import {
   Calendar,
   Palette,
   Weight,
-  Camera,
 } from 'lucide-react';
 
 import { usePeople, useCreatePerson, useUpdatePerson, useDeletePerson } from '../hooks/usePeople';
 import type { Person, CreatePersonDto, UpdatePersonDto, PersonFormData } from '../types/person';
 import AppLayout from '../components/AppLayout';
+import PhotoUpload from '../components/PhotoUpload';
 
 // Predefined color options for people
 const COLOR_OPTIONS = [
@@ -384,17 +384,13 @@ export default function PeoplePage() {
                       </p>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="photo_url">Photo URL (Optional)</Label>
-                      <Input
-                        id="photo_url"
-                        placeholder="https://example.com/photo.jpg"
-                        value={formData.photo_url}
-                        onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, photo_url: e.target.value }))
-                        }
-                      />
-                    </div>
+                    <PhotoUpload
+                      currentPhoto={formData.photo_url}
+                      onPhotoChange={(photoUrl) =>
+                        setFormData((prev) => ({ ...prev, photo_url: photoUrl }))
+                      }
+                      personName={formData.name || 'New Person'}
+                    />
 
                     <div className="space-y-2">
                       <Label>Color</Label>
