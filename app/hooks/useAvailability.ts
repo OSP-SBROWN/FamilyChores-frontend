@@ -15,7 +15,10 @@ export function useDayTypes() {
   return useQuery({
     queryKey: availabilityKeys.dayTypes(),
     queryFn: AvailabilityService.getDayTypes,
-    staleTime: 10 * 60 * 1000, // 10 minutes - day types don't change often
+    staleTime: 30 * 60 * 1000, // 30 minutes - day types don't change often
+    gcTime: 60 * 60 * 1000, // 1 hour
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: false, // Don't refetch on mount if data exists
   });
 }
 
@@ -24,7 +27,10 @@ export function useAvailabilityMatrix() {
   return useQuery({
     queryKey: availabilityKeys.matrix(),
     queryFn: AvailabilityService.getAvailabilityMatrix,
-    staleTime: 30 * 1000, // 30 seconds
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 }
 
@@ -33,7 +39,10 @@ export function usePersonAvailability(personId: string) {
     queryKey: availabilityKeys.person(personId),
     queryFn: () => AvailabilityService.getPersonAvailability(personId),
     enabled: !!personId,
-    staleTime: 30 * 1000,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 }
 

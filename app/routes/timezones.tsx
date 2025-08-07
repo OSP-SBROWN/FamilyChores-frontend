@@ -261,11 +261,17 @@ export default function TimezonesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this timezone?')) {
+    const timezone = timezones?.find(t => t.id === id);
+    const timezoneName = timezone?.name || 'this timezone';
+    
+    if (confirm(`Are you sure you want to delete "${timezoneName}"? This action cannot be undone.`)) {
       try {
+        console.log('Attempting to delete timezone:', id, timezoneName);
         await deleteMutation.mutateAsync(id);
+        console.log('Successfully triggered delete mutation for:', id);
       } catch (error) {
         console.error('Error deleting timezone:', error);
+        alert('Failed to delete timezone. Please try again.');
       }
     }
   };

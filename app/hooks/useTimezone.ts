@@ -8,9 +8,10 @@ export function useTimezones() {
   return useQuery({
     queryKey: [TIMEZONE_QUERY_KEY],
     queryFn: TimezoneService.getAll,
-    staleTime: 30 * 1000, // 30 seconds (reduced from 5 minutes)
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes - timezones don't change often
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 }
 
@@ -58,14 +59,29 @@ export function useDeleteTimezone() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => TimezoneService.delete(id),
-    onSuccess: () => {
-      // More aggressive cache invalidation
+    mutationFn: async (id: string) => {
+      console.log('Deleting timezone with ID:', id);
+      const result = await TimezoneService.delete(id);
+      console.log('Delete result:', result);
+      return result;
+    },
+    onSuccess: (_, deletedId) => {
+      console.log('Successfully deleted timezone:', deletedId);
+      
+      // Remove from cache immediately for optimistic update
+      queryClient.setQueryData([TIMEZONE_QUERY_KEY], (old: Timezone[] | undefined) => {
+        if (!old) return old;
+        return old.filter(timezone => timezone.id !== deletedId);
+      });
+      
+      // Also invalidate and refetch to ensure consistency
       queryClient.invalidateQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
       queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
     onError: (error) => {
       console.error('Error deleting timezone:', error);
+      // Refetch to ensure UI is in sync with server
+      queryClient.refetchQueries({ queryKey: [TIMEZONE_QUERY_KEY] });
     },
   });
 }

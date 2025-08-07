@@ -8,6 +8,10 @@ export function usePeople() {
   return useQuery({
     queryKey: [PERSON_QUERY_KEY],
     queryFn: PersonService.getAllPeople,
+    staleTime: 5 * 60 * 1000, // 5 minutes - people don't change often
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 }
 
