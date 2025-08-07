@@ -164,23 +164,54 @@ router.put('/:id', async (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    console.log(`DELETE /api/timezones/${id} - Deleting timezone`);
+    console.log(`DELETE /api/timezones/${id} - Deleting timezone and related data`);
 
-    await prisma.timezone.delete({
-      where: { id: id }
+    // Start a transaction to ensure data consistency
+    await prisma.$transaction(async (tx: any) => {
+      // First, check if timezone exists
+      const timezone = await tx.timezone.findUnique({
+        where: { id: id }
+      });
+
+      if (!timezone) {
+        throw new Error('TIMEZONE_NOT_FOUND');
+      }
+
+      // Delete related availability records
+      const deletedAvailability = await tx.people_availability.deleteMany({
+        where: { timezone_id: id }
+      });
+      console.log(`Deleted ${deletedAvailability.count} availability records for timezone ${id}`);
+
+      // Delete related chore assignments
+      const deletedAssignments = await tx.chore_assignments.deleteMany({
+        where: { timezone_id: id }
+      });
+      console.log(`Deleted ${deletedAssignments.count} chore assignments for timezone ${id}`);
+
+      // Delete related chore timezones
+      const deletedChoreTimezones = await tx.chore_timezones.deleteMany({
+        where: { timezone_id: id }
+      });
+      console.log(`Deleted ${deletedChoreTimezones.count} chore timezone relationships for timezone ${id}`);
+
+      // Finally, delete the timezone
+      await tx.timezone.delete({
+        where: { id: id }
+      });
+
+      console.log(`Successfully deleted timezone ${id} and all related data`);
     });
-
-    console.log(`Deleted timezone ${id}`);
 
     res.json({
       success: true,
-      message: 'Timezone deleted successfully',
+      message: 'Timezone and all related data deleted successfully',
       timestamp: new Date().toISOString()
     });
   } catch (error: any) {
     console.error(`Error deleting timezone ${req.params.id}:`, error);
     
-    if (error?.code === 'P2025') {
+    if (error.message === 'TIMEZONE_NOT_FOUND' || error?.code === 'P2025') {
       return res.status(404).json({
         success: false,
         error: 'Timezone not found',
