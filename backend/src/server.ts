@@ -7,6 +7,7 @@ import timezonesRouter from './routes/timezones';
 import peopleRouter from './routes/people';
 import dayTypesRouter from './routes/day-types';
 import availabilityRouter from './routes/availability';
+import availabilityCompactRouter from './routes/availability-compact';
 
 // Load environment variables
 dotenv.config();
@@ -56,6 +57,9 @@ app.use('/api/day-types', dayTypesRouter);
 // Availability API routes
 app.use('/api/availability', availabilityRouter);
 
+// Compact Availability API routes
+app.use('/api/availability-compact', availabilityCompactRouter);
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
@@ -69,6 +73,7 @@ app.get('/', (req, res) => {
       people: '/api/people',
       dayTypes: '/api/day-types',
       availability: '/api/availability',
+      availabilityCompact: '/api/availability-compact',
       docs: '/api/docs'
     }
   });
