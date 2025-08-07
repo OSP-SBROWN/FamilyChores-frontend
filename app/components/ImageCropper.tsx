@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { ZoomIn, ZoomOut, RotateCcw, Check, X } from 'lucide-react';
+import { optimizeImage } from '../utils/imageOptimization';
 
 interface ImageCropperProps {
   imageSrc: string;
@@ -212,9 +213,9 @@ export default function ImageCropper({ imageSrc, onCropComplete, onCancel }: Ima
       drawHeight * cropScale
     );
 
-    // Convert to data URL and call callback
-    const croppedImageUrl = cropCanvas.toDataURL('image/jpeg', 0.8);
-    onCropComplete(croppedImageUrl);
+    // Optimize the final image to reduce size
+    const optimizedImageUrl = optimizeImage(cropCanvas, 150, 150, 0.8);
+    onCropComplete(optimizedImageUrl);
   };
 
   return (

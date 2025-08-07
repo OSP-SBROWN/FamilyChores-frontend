@@ -4,6 +4,7 @@ import { Label } from './ui/label';
 import { Card, CardContent } from './ui/card';
 import { Upload, Camera, X, Check, Loader2 } from 'lucide-react';
 import ImageCropper from './ImageCropper';
+import { optimizeImageFromFile } from '../utils/imageOptimization';
 
 interface PhotoUploadProps {
   currentPhoto?: string;
