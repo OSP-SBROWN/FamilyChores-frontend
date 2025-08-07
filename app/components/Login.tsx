@@ -58,7 +58,7 @@ export default function Login() {
                 <Heart className="w-8 h-8 text-white fill-current" />
               </div>
             </div>
-            <h1 className="font-script text-4xl text-[#023047] mb-2">
+            <h1 className="font-raleway text-4xl font-semibold text-[#023047] mb-2">
               ChoreNest
             </h1>
             <p className="text-gray-600 text-sm">

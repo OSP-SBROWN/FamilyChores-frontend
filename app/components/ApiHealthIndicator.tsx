@@ -34,10 +34,8 @@ export default function ApiHealthIndicator() {
     // Check if we're in development mode
     const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
-    // Determine API base URL based on hostname
-    const apiBaseUrl = window.location.hostname === 'chorenest.com' 
-      ? 'https://family-chores-frontend.vercel.app/api'
-      : '/api';
+    // Use Railway API endpoint
+    const apiBaseUrl = 'https://familychores-frontend-production.up.railway.app/api';
     
     if (isDevelopment) {
       // In development, show mock status since Vercel API routes don't work locally

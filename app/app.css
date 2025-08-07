@@ -1,9 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Dancing+Script:wght@400;500;600;700&family=Gorditas:wght@400;700&display=swap');
 @import "tailwindcss";
 
 html,
 body {
-  font-family: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Raleway', ui-sans-serif, system-ui, sans-serif;
   background: linear-gradient(135deg, rgba(142, 202, 230, 0.8) 0%, rgba(33, 158, 188, 0.9) 50%, rgba(2, 48, 71, 0.95) 100%);
   min-height: 100vh;
 }
@@ -15,7 +14,7 @@ body.dark {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto Serif', ui-serif, Georgia, Cambria, serif;
+  font-family: 'Raleway', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Custom script font class for branding */

@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-// Use environment variable for API base URL, fallback to same domain in development
-const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'chorenest.com' 
-  ? 'https://family-chores-frontend.vercel.app/api'
-  : '/api';
+// Use Railway API endpoint
+const API_BASE_URL = 'https://familychores-frontend-production.up.railway.app/api';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

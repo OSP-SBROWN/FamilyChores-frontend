@@ -6,9 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'script': ['Dancing Script', 'cursive'],
-        'roboto-serif': ['Roboto Serif', 'serif'],
-        'roboto': ['Roboto', 'sans-serif'],
+        'sans': ['Raleway', 'sans-serif'],
+        'raleway': ['Raleway', 'sans-serif'],
       },
       colors: {
         // ChoreNest color palette
