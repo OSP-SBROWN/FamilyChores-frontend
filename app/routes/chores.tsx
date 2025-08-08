@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus } from "lucide-react";
 import { Button } from "../components/ui/button";
+import { ConfirmationDialog } from "../components/ui/confirmation-dialog";
 
 // Import chores components
 import ChoresList from "../components/chores/ChoresList";
@@ -24,6 +25,7 @@ export default function Chores() {
   const [activeTab, setActiveTab] = useState("manage");
   const [isCreating, setIsCreating] = useState(false);
   const [selectedChore, setSelectedChore] = useState<Chore | null>(null);
+  const [importConfirmation, setImportConfirmation] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch chores data
@@ -192,14 +194,7 @@ export default function Chores() {
                 {!isLoading && (
                   <Button 
                     variant="outline" 
-                    onClick={async () => {
-                      try {
-                        await ChoreService.importChoresFromMD();
-                        queryClient.invalidateQueries({ queryKey: ['chores'] });
-                      } catch (error) {
-                        console.error("Error importing chores:", error);
-                      }
-                    }}
+                    onClick={() => setImportConfirmation(true)}
                     className="flex items-center gap-2"
                   >
                     Import from Chores.md
@@ -299,6 +294,25 @@ export default function Chores() {
             buttonVariant="ghost"
           />
         )}
+        
+        {/* Import Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={importConfirmation}
+          onClose={() => setImportConfirmation(false)}
+          onConfirm={async () => {
+            try {
+              await ChoreService.importChoresFromMD();
+              queryClient.invalidateQueries({ queryKey: ['chores'] });
+              setImportConfirmation(false);
+            } catch (error) {
+              console.error("Error importing chores:", error);
+              setImportConfirmation(false);
+            }
+          }}
+          title="Import Chores"
+          description="Are you sure you want to import chores from Chores.md? This might create duplicates if the chores already exist."
+          confirmText="Import"
+        />
       </div>
     </AppLayout>
   );

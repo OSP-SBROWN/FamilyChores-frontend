@@ -1,7 +1,9 @@
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { CheckCircle2, Clock, User, AlertCircle } from "lucide-react";
+import { useState } from "react";
 import type { ChoreAssignment, ChoreAssignmentStatus } from "../../types/chore";
+import { ConfirmationDialog } from "../ui/confirmation-dialog";
 
 interface AssignmentsListProps {
   assignments: ChoreAssignment[];
@@ -11,6 +13,15 @@ interface AssignmentsListProps {
 }
 
 export default function AssignmentsList({ assignments, peopleMap, choresMap, onComplete }: AssignmentsListProps) {
+  const [completeConfirmation, setCompleteConfirmation] = useState<{
+    isOpen: boolean;
+    assignmentId: string | null;
+    choreTitle: string;
+  }>({
+    isOpen: false,
+    assignmentId: null,
+    choreTitle: ""
+  });
   const getStatusBadge = (status: ChoreAssignmentStatus) => {
     switch (status) {
       case 'PENDING':
@@ -66,7 +77,11 @@ export default function AssignmentsList({ assignments, peopleMap, choresMap, onC
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => onComplete(assignment.id)}
+                onClick={() => setCompleteConfirmation({
+                  isOpen: true,
+                  assignmentId: assignment.id,
+                  choreTitle: choresMap[assignment.choreId]?.title || "Unknown Chore"
+                })}
                 className="h-8 px-3 flex gap-2 text-green-600 hover:text-green-700 hover:bg-green-50"
               >
                 <CheckCircle2 className="h-4 w-4" />
@@ -92,6 +107,22 @@ export default function AssignmentsList({ assignments, peopleMap, choresMap, onC
           </div>
         </div>
       ))}
+      
+      {/* Complete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={completeConfirmation.isOpen}
+        onClose={() => setCompleteConfirmation(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={() => {
+          if (completeConfirmation.assignmentId && onComplete) {
+            onComplete(completeConfirmation.assignmentId);
+            setCompleteConfirmation({ isOpen: false, assignmentId: null, choreTitle: "" });
+          }
+        }}
+        title="Mark Chore as Complete"
+        description={`Are you sure you want to mark "${completeConfirmation.choreTitle}" as completed?`}
+        confirmText="Complete"
+        destructive={false}
+      />
     </div>
   );
 }

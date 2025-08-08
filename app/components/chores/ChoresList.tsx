@@ -1,7 +1,9 @@
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Trash2, Edit, Calendar, Clock, Users, AlertCircle, SquareCheck } from "lucide-react";
+import { useState } from "react";
 import type { Chore, ChoreAssignmentType, ChoreFrequency, ChoreStatus } from "../../types/chore";
+import { ConfirmationDialog } from "../ui/confirmation-dialog";
 
 interface ChoresListProps {
   chores: Chore[];
@@ -10,6 +12,15 @@ interface ChoresListProps {
 }
 
 export default function ChoresList({ chores, onEdit, onDelete }: ChoresListProps) {
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    choreId: string | null;
+    choreTitle: string;
+  }>({
+    isOpen: false,
+    choreId: null,
+    choreTitle: ""
+  });
   const getAssignmentTypeBadge = (type: ChoreAssignmentType) => {
     switch (type) {
       case 'SINGLE':
@@ -108,7 +119,11 @@ export default function ChoresList({ chores, onEdit, onDelete }: ChoresListProps
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => onDelete(chore.id)}
+                  onClick={() => setDeleteConfirmation({
+                    isOpen: true,
+                    choreId: chore.id,
+                    choreTitle: chore.title
+                  })}
                   className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -146,6 +161,22 @@ export default function ChoresList({ chores, onEdit, onDelete }: ChoresListProps
           </div>
         </div>
       ))}
+      
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={deleteConfirmation.isOpen}
+        onClose={() => setDeleteConfirmation(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={() => {
+          if (deleteConfirmation.choreId && onDelete) {
+            onDelete(deleteConfirmation.choreId);
+            setDeleteConfirmation({ isOpen: false, choreId: null, choreTitle: "" });
+          }
+        }}
+        title="Delete Chore"
+        description={`Are you sure you want to delete "${deleteConfirmation.choreTitle}"? This action cannot be undone.`}
+        confirmText="Delete"
+        destructive={true}
+      />
     </div>
   );
 }
