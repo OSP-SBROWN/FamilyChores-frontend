@@ -129,11 +129,11 @@ export default function Home() {
                   with an intuitive kanban-style interface.
                 </p>
                 <Button
-                  className="w-full bg-gradient-to-r from-[#219EBC] to-[#023047] text-white font-semibold shadow-lg opacity-70 cursor-not-allowed"
+                  asChild
+                  className="w-full bg-gradient-to-r from-[#219EBC] to-[#023047] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   size="lg"
-                  disabled
                 >
-                  Coming Soon
+                  <Link to="/chores">Manage Chores</Link>
                 </Button>
               </CardContent>
             </Card>

@@ -28,8 +28,8 @@ export default function Header() {
   const menuItems = [
     { name: "Home", href: "/", icon: Home, disabled: false },
     { name: "Manage Timezones", href: "/timezones", icon: Clock, disabled: false },
-  { name: "Manage Household", href: "/people", icon: Users, disabled: false },
-    { name: "Manage Chores", href: "/chores", icon: Calendar, disabled: true },
+    { name: "Manage Household", href: "/people", icon: Users, disabled: false },
+    { name: "Manage Chores", href: "/chores", icon: Calendar, disabled: false },
     { name: "Settings", href: "/settings", icon: Settings, disabled: true },
   ];
 
