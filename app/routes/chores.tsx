@@ -2,43 +2,128 @@ import { useState } from "react";
 import AppLayout from "../components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 // Import chores components
 import ChoresList from "../components/chores/ChoresList";
 import ChoreForm from "../components/chores/ChoreForm";
 import AssignmentsList from "../components/chores/AssignmentsList";
+import { PersonService } from "../services/people";
+import { TimezoneService } from "../services/timezones";
+import * as ChoreService from "../services/chore.service";
+
+// Import types
+import type { Chore, ChoreAssignment, ChoreCreateDto } from "../types/chore";
+import { ChoreAssignmentStatus } from "../types/chore";
+import type { Person } from "../types/person";
+import type { Timezone } from "../types/timezone";
 
 export default function Chores() {
   const [activeTab, setActiveTab] = useState("manage");
+  const queryClient = useQueryClient();
   
-  // We'll implement these queries later
-  const { data: choresData, isLoading: choresLoading } = useQuery({
+  // Fetch chores data
+  const { data: choresData, isLoading: choresLoading } = useQuery<Chore[]>({
     queryKey: ["chores"],
     queryFn: async () => {
-      // Placeholder for API call
-      return [];
+      try {
+        return await ChoreService.getChores();
+      } catch (error) {
+        console.error("Failed to fetch chores:", error);
+        return [];
+      }
     },
   });
 
-  const { data: peopleData, isLoading: peopleLoading } = useQuery({
+  // Fetch people data
+  const { data: peopleData, isLoading: peopleLoading } = useQuery<Person[]>({
     queryKey: ["people"],
     queryFn: async () => {
-      // Placeholder for API call
-      return [];
+      try {
+        return await PersonService.getAllPeople();
+      } catch (error) {
+        console.error("Failed to fetch people:", error);
+        return [];
+      }
     },
   });
   
-  const { data: timezonesData, isLoading: timezonesLoading } = useQuery({
+  // Fetch timezones data
+  const { data: timezonesData, isLoading: timezonesLoading } = useQuery<Timezone[]>({
     queryKey: ["timezones"],
     queryFn: async () => {
-      // Placeholder for API call
-      return [];
+      try {
+        return await TimezoneService.getAll();
+      } catch (error) {
+        console.error("Failed to fetch timezones:", error);
+        return [];
+      }
     },
   });
   
-  const isLoading = choresLoading || peopleLoading || timezonesLoading;
+  // Fetch assignments data
+  const { data: assignmentsData, isLoading: assignmentsLoading } = useQuery<ChoreAssignment[]>({
+    queryKey: ["choreAssignments"],
+    queryFn: async () => {
+      try {
+        return await ChoreService.getChoreAssignments();
+      } catch (error) {
+        console.error("Failed to fetch assignments:", error);
+        return [];
+      }
+    },
+  });
+  
+  const isLoading = choresLoading || peopleLoading || timezonesLoading || assignmentsLoading;
+  
+  // Create maps for the assignments list
+  const peopleMap: Record<string, { name: string }> = {};
+  if (peopleData) {
+    peopleData.forEach(person => {
+      peopleMap[person.id] = { name: person.name };
+    });
+  }
+
+  // Create a map of chores for assignments list
+  const choresMap: Record<string, { title: string }> = {};
+  if (choresData) {
+    choresData.forEach(chore => {
+      choresMap[chore.id] = { title: chore.title };
+    });
+  }
+  
+  // Handler functions
+  const handleCreateChore = async (data: ChoreCreateDto) => {
+    try {
+      await ChoreService.createChore(data);
+      queryClient.invalidateQueries({ queryKey: ['chores'] });
+    } catch (error) {
+      console.error("Error creating chore:", error);
+    }
+  };
+
+  const handleDeleteChore = async (id: string) => {
+    try {
+      await ChoreService.deleteChore(id);
+      queryClient.invalidateQueries({ queryKey: ['chores'] });
+    } catch (error) {
+      console.error("Error deleting chore:", error);
+    }
+  };
+
+  const handleCompleteAssignment = async (assignmentId: string) => {
+    try {
+      await ChoreService.updateChoreAssignment({
+        id: assignmentId,
+        status: ChoreAssignmentStatus.COMPLETED,
+        completedAt: new Date().toISOString()
+      });
+      queryClient.invalidateQueries({ queryKey: ['choreAssignments'] });
+    } catch (error) {
+      console.error("Error completing assignment:", error);
+    }
+  };
 
   return (
     <AppLayout>
@@ -72,14 +157,11 @@ export default function Chores() {
                     ) : (
                       <ChoresList 
                         chores={choresData || []} 
-                        onEdit={(chore) => {
+                        onEdit={(chore: Chore) => {
                           console.log("Edit chore:", chore);
                           // We'll implement this later
                         }}
-                        onDelete={(id) => {
-                          console.log("Delete chore:", id);
-                          // We'll implement this later
-                        }}
+                        onDelete={handleDeleteChore}
                       />
                     )}
                   </CardContent>
@@ -100,10 +182,7 @@ export default function Chores() {
                       <ChoreForm 
                         people={peopleData || []} 
                         timezones={timezonesData || []}
-                        onSubmit={(data) => {
-                          console.log("Create chore:", data);
-                          // We'll implement this later
-                        }}
+                        onSubmit={handleCreateChore}
                       />
                     )}
                   </CardContent>
@@ -124,13 +203,10 @@ export default function Chores() {
                   </div>
                 ) : (
                   <AssignmentsList 
-                    assignments={[]} 
-                    peopleMap={{}} 
-                    choresMap={{}}
-                    onComplete={(id) => {
-                      console.log("Complete assignment:", id);
-                      // We'll implement this later
-                    }}
+                    assignments={assignmentsData || []} 
+                    peopleMap={peopleMap} 
+                    choresMap={choresMap}
+                    onComplete={handleCompleteAssignment}
                   />
                 )}
               </CardContent>
