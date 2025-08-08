@@ -59,6 +59,10 @@ router.get('/matrix', async (req, res) => {
       people: people.map((p: any) => p.name),
       days: dayTypes.map((d: any) => d.name),
       timezones: timezones.map((tz: any) => tz.name),
+      // Include IDs for saving
+      peopleIds: people.map((p: any) => p.id),
+      dayIds: dayTypes.map((d: any) => d.id),
+      timezoneIds: timezones.map((tz: any) => tz.id),
       unavailable: unavailableIndices
     };
 

@@ -3,6 +3,9 @@ export interface CompactAvailabilityResponse {
   people: string[];
   days: string[];
   timezones: string[];
+  peopleIds: string[];
+  dayIds: string[];
+  timezoneIds: string[];
   unavailable: number[][];
 }
 
@@ -20,6 +23,9 @@ export interface AvailabilityMatrix {
   people: string[];
   days: string[];
   timezones: string[];
+  peopleIds: string[];
+  dayIds: string[];
+  timezoneIds: string[];
   matrix: Map<string, boolean>; // key: "personIndex:dayIndex:timezoneIndex", value: isAvailable
 }
 
@@ -54,7 +60,7 @@ export class CompactAvailabilityService {
    * Assumes all combinations are available except those in the unavailable array
    */
   static expandCompactMatrix(compactData: CompactAvailabilityResponse): AvailabilityMatrix {
-    const { people, days, timezones, unavailable } = compactData;
+    const { people, days, timezones, peopleIds, dayIds, timezoneIds, unavailable } = compactData;
     const matrix = new Map<string, boolean>();
 
     // Initialize all combinations as available (true)
@@ -77,6 +83,9 @@ export class CompactAvailabilityService {
       people,
       days,
       timezones,
+      peopleIds,
+      dayIds,
+      timezoneIds,
       matrix
     };
   }

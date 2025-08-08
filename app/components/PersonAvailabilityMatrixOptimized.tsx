@@ -101,8 +101,8 @@ export function PersonAvailabilityMatrixOptimized({ personId, personName }: Pers
       for (const dayIndex of Object.keys(localAvailability).map(Number)) {
         for (const timezoneIndex of Object.keys(localAvailability[dayIndex]).map(Number)) {
           availabilities.push({
-            day_type_id: availabilityMatrix?.days[dayIndex] || '',
-            timezone_id: availabilityMatrix?.timezones[timezoneIndex] || '',
+            day_type_id: availabilityMatrix?.dayIds[dayIndex] || '',
+            timezone_id: availabilityMatrix?.timezoneIds[timezoneIndex] || '',
             is_available: localAvailability[dayIndex][timezoneIndex]
           });
         }
