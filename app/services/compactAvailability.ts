@@ -1,5 +1,3 @@
-import { API_BASE_URL } from './api';
-
 export interface CompactAvailabilityResponse {
   success: boolean;
   people: string[];
@@ -26,7 +24,7 @@ export interface AvailabilityMatrix {
 }
 
 export class CompactAvailabilityService {
-  private static readonly BASE_URL = `${API_BASE_URL}/availability-compact`;
+  private static readonly BASE_URL = 'https://familychores-frontend-production.up.railway.app/api/availability-compact';
 
   /**
    * Fetch compact availability data (only unavailable combinations)
