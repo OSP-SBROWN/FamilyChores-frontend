@@ -18,7 +18,7 @@ router.get('/person/:personId', async (req, res) => {
         dt.name as day_name,
         dt.display_name as day_display_name,
         t.name as timezone_name,
-        t.display_name as timezone_display_name
+        t.name as timezone_display_name
       FROM people_availability pa
       JOIN day_types dt ON pa.day_type_id = dt.id
       JOIN timezones t ON pa.timezone_id = t.id
@@ -164,7 +164,7 @@ router.get('/matrix', async (req, res) => {
         dt.name as day_name,
         dt.display_name as day_display_name,
         t.name as timezone_name,
-        t.display_name as timezone_display_name,
+        t.name as timezone_display_name,
         t.display_order as timezone_order
       FROM people_availability pa
       JOIN people p ON pa.person_id = p.id
