@@ -3,12 +3,30 @@ import type { Chore, ChoreAssignment, ChoreCreateDto, ChoreUpdateDto, ChoreWithA
 import { ChoreStatus } from '../types/chore';
 import type { ApiResponse } from '../types/timezone';
 
+// In-memory store for mock data (until the API is implemented)
+const mockChoresStore: Chore[] = [
+  // Add some initial mock chores if desired
+  {
+    id: 'mock-initial-chore',
+    title: 'Example Chore',
+    description: 'This is an example chore to demonstrate the UI',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'WEEKLY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false
+  }
+];
+
 export async function getChores(): Promise<Chore[]> {
   try {
-    // Temporary: return an empty array until backend implements the endpoint
+    // Temporary: return mock data from our in-memory store until backend implements the endpoint
     console.log('Fetching chores from API');
-    // For now, returning an empty array as the endpoint doesn't exist yet
-    return [];
+    
+    // Return a copy of the mockChoresStore to avoid direct manipulation
+    return [...mockChoresStore];
     
     // When the API endpoint is ready, uncomment the following:
     // const response = await api.get<ApiResponse<Chore[]>>('/chores');
@@ -75,6 +93,10 @@ export async function createChore(chore: ChoreCreateDto): Promise<Chore> {
     // Add a slight delay to simulate network request
     await new Promise(resolve => setTimeout(resolve, 500));
     
+    // Add the new chore to our mock store
+    mockChoresStore.push(mockResponse);
+    console.log('Updated mock chores store:', mockChoresStore);
+    
     return mockResponse;
     
     // When the API endpoint is ready, uncomment the following:
@@ -128,6 +150,13 @@ export async function deleteChore(id: string): Promise<void> {
     
     // Add a slight delay to simulate network request
     await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Remove the chore from our mock store
+    const index = mockChoresStore.findIndex(chore => chore.id === id);
+    if (index !== -1) {
+      mockChoresStore.splice(index, 1);
+      console.log('Chore removed from mock store');
+    }
     
     // When the API endpoint is ready, uncomment the following:
     // await api.delete(`/chores/${id}`);
