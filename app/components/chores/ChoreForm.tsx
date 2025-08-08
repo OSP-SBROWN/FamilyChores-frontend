@@ -124,8 +124,8 @@ export default function ChoreForm({ people, timezones, onSubmit, isSubmitting = 
         <div className="space-y-2">
           <Label htmlFor="timezone">Timezone/Time Period</Label>
           <Select 
-            value={timezoneId} 
-            onValueChange={(value) => setTimezoneId(value)}
+            value={timezoneId || ""} 
+            onValueChange={(value: string) => setTimezoneId(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select a time period" />
@@ -145,7 +145,7 @@ export default function ChoreForm({ people, timezones, onSubmit, isSubmitting = 
         <Label htmlFor="frequency">Frequency</Label>
         <Select 
           value={frequency} 
-          onValueChange={(value) => setFrequency(value as ChoreFrequency)}
+          onValueChange={(value: string) => setFrequency(value as ChoreFrequency)}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select frequency" />
@@ -165,7 +165,7 @@ export default function ChoreForm({ people, timezones, onSubmit, isSubmitting = 
         <Label htmlFor="assignmentType">Assignment Type</Label>
         <Select 
           value={assignmentType} 
-          onValueChange={(value) => setAssignmentType(value as ChoreAssignmentType)}
+          onValueChange={(value: string) => setAssignmentType(value as ChoreAssignmentType)}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select assignment type" />

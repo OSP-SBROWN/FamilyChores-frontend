@@ -5,9 +5,11 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Auth0ProviderWrapper from "./components/Auth0Provider";
+import LoadingFallback from "./components/LoadingFallback";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -53,10 +55,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const navigation = useNavigation();
+  const isLoading = navigation.state === "loading";
+
   return (
     <Auth0ProviderWrapper>
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        {isLoading ? <LoadingFallback /> : <Outlet />}
       </QueryClientProvider>
     </Auth0ProviderWrapper>
   );
