@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Card, CardContent, Grid, Divider, Alert } from '@mui/material';
 import { format, parseISO } from 'date-fns';
 import { ScheduleBuilder } from '../components/ScheduleBuilder';
 import scheduleService from '../services/schedule.service';
-import type { ChoreSchedule, ScheduleType, ScheduleOccurrence } from '../types/schedule';
+import type { ChoreSchedule, ScheduleOccurrence } from '../types/schedule';
+// Import the ScheduleType as a value
+import { ScheduleType } from '../types/schedule';
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "../components/ui/alert";
+import { Separator } from "../components/ui/separator";
 
 interface SchedulePageProps {
   choreId: string;
@@ -120,26 +125,29 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({ choreId, choreName }
   };
 
   if (loading && !schedule) {
-    return <Typography>Loading schedule...</Typography>;
+    return <div className="text-lg">Loading schedule...</div>;
   }
 
   if (error) {
     return (
-      <Alert severity="error" sx={{ mb: 3 }}>
-        {error}
-        <Button variant="outlined" size="small" onClick={loadScheduleData} sx={{ ml: 2 }}>
-          Retry
-        </Button>
+      <Alert variant="destructive">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription className="flex justify-between items-center">
+          {error}
+          <Button variant="outline" size="sm" onClick={loadScheduleData} className="ml-2">
+            Retry
+          </Button>
+        </AlertDescription>
       </Alert>
     );
   }
 
   if (editing || !schedule) {
     return (
-      <Box>
-        <Typography variant="h5" gutterBottom>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold mb-4">
           {schedule ? 'Edit Schedule' : 'Create Schedule'} for {choreName}
-        </Typography>
+        </h2>
         
         <ScheduleBuilder
           choreId={choreId}
@@ -147,63 +155,58 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({ choreId, choreName }
           onSave={handleSaveSchedule}
           onCancel={() => setEditing(false)}
         />
-      </Box>
+      </div>
     );
   }
 
   return (
-    <Box>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h5">Schedule for {choreName}</Typography>
-                <Button variant="outlined" onClick={() => setEditing(true)}>
-                  Edit Schedule
-                </Button>
-              </Box>
-              
-              <Typography variant="subtitle1" gutterBottom>
-                {getScheduleDescription(schedule)}
-              </Typography>
-              
-              <Typography variant="body2" color="textSecondary">
-                Starting from {format(new Date(schedule.startDate!), 'MMMM d, yyyy')}
-              </Typography>
-              
-              {schedule.endDate && (
-                <Typography variant="body2" color="textSecondary">
-                  Until {format(new Date(schedule.endDate), 'MMMM d, yyyy')}
-                </Typography>
-              )}
-              
-              <Divider sx={{ my: 2 }} />
-              
-              <Typography variant="subtitle1" gutterBottom>
-                Next Occurrences
-              </Typography>
-              
-              {occurrences.length > 0 ? (
-                <Box>
-                  {occurrences.map((occurrence, index) => (
-                    <Card key={index} variant="outlined" sx={{ mb: 1, p: 2 }}>
-                      <Typography>
-                        {format(new Date(occurrence.date), 'EEEE, MMMM d, yyyy')}
-                      </Typography>
-                    </Card>
-                  ))}
-                </Box>
-              ) : (
-                <Typography variant="body2" color="textSecondary">
-                  No upcoming occurrences found.
-                </Typography>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+    <div className="space-y-4">
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Schedule for {choreName}</CardTitle>
+            <Button variant="outline" onClick={() => setEditing(true)}>
+              Edit Schedule
+            </Button>
+          </div>
+          <CardDescription>
+            {getScheduleDescription(schedule)}
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          <div className="text-sm text-muted-foreground">
+            Starting from {format(new Date(schedule.startDate!), 'MMMM d, yyyy')}
+          </div>
+          
+          {schedule.endDate && (
+            <div className="text-sm text-muted-foreground">
+              Until {format(new Date(schedule.endDate), 'MMMM d, yyyy')}
+            </div>
+          )}
+          
+          <Separator className="my-4" />
+          
+          <h3 className="text-lg font-semibold">Next Occurrences</h3>
+          
+          {occurrences.length > 0 ? (
+            <div className="space-y-2">
+              {occurrences.map((occurrence, index) => (
+                <Card key={index} className="mb-2">
+                  <CardContent className="p-3">
+                    {format(new Date(occurrence.date), 'EEEE, MMMM d, yyyy')}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-sm text-muted-foreground">
+              No upcoming occurrences found.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
