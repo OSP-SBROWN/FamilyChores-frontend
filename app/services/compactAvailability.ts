@@ -24,15 +24,13 @@ export interface AvailabilityMatrix {
 }
 
 export class CompactAvailabilityService {
-  private static readonly BASE_URL = 'https://familychores-frontend-production.up.railway.app/api/availability-compact';
-
   /**
    * Fetch compact availability data (only unavailable combinations)
    * This reduces data transfer by ~98% compared to the full matrix
    */
   static async fetchCompactMatrix(): Promise<CompactAvailabilityResponse> {
     try {
-      const response = await fetch(`${this.BASE_URL}/matrix`);
+      const response = await fetch('https://familychores-frontend-production.up.railway.app/api/availability-compact/matrix');
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
