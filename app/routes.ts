@@ -5,4 +5,5 @@ export default [
   route("timezones", "routes/timezones.tsx"),
   route("people", "routes/people.tsx"),
   route("availability", "routes/availability.tsx"),
+  route("chores", "routes/chores.tsx"),
 ] satisfies RouteConfig;
