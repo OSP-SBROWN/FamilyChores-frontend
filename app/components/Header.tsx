@@ -28,7 +28,7 @@ export default function Header() {
   const menuItems = [
     { name: "Home", href: "/", icon: Home, disabled: false },
     { name: "Manage Timezones", href: "/timezones", icon: Clock, disabled: false },
-    { name: "Manage Household", href: "/household", icon: Users, disabled: true },
+  { name: "Manage Household", href: "/people", icon: Users, disabled: false },
     { name: "Manage Chores", href: "/chores", icon: Calendar, disabled: true },
     { name: "Settings", href: "/settings", icon: Settings, disabled: true },
   ];
