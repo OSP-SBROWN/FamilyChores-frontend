@@ -148,6 +148,14 @@ export default function PeoplePage() {
     console.log('🚀 Preloading compact availability data...');
     const preloadStart = performance.now();
     
+    // Only preload if not already cached to prevent unnecessary work
+    const cachedData = queryClient.getQueryData(['availability-compact-matrix']);
+    if (cachedData) {
+      console.log('✅ Availability data already cached');
+      setAvailabilityPreloaded(true);
+      return;
+    }
+    
     queryClient.prefetchQuery({
       queryKey: ['availability-compact-matrix'],
       queryFn: CompactAvailabilityService.fetchCompactMatrix,
@@ -159,7 +167,7 @@ export default function PeoplePage() {
     }).catch((error) => {
       console.warn('⚠️ Availability preload failed:', error);
     });
-  }, [queryClient]);
+  }, []); // Empty dependency array to run only once
 
   const [editingPerson, setEditingPerson] = useState<Person | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

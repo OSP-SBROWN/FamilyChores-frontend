@@ -80,10 +80,17 @@ export function PersonAvailabilityMatrixOptimized({ personId, personName }: Pers
         });
       });
 
-      setLocalAvailability(newState);
-      setHasChanges(false);
+      // Only update if state actually changed to prevent infinite renders
+      setLocalAvailability(prevState => {
+        const hasActualChanges = JSON.stringify(prevState) !== JSON.stringify(newState);
+        if (hasActualChanges) {
+          setHasChanges(false);
+          return newState;
+        }
+        return prevState;
+      });
     }
-  }, [availabilityMatrix, personIndex, weekdayIndices]);
+  }, [availabilityMatrix, personIndex, weekdayIndices.length]); // Use length instead of array
 
   // Save changes mutation
   const saveMutation = useMutation({
