@@ -5,18 +5,352 @@ import type { ApiResponse } from '../types/timezone';
 
 // In-memory store for mock data (until the API is implemented)
 const mockChoresStore: Chore[] = [
-  // Add some initial mock chores if desired
+  // Morning Tasks
   {
-    id: 'mock-initial-chore',
-    title: 'Example Chore',
-    description: 'This is an example chore to demonstrate the UI',
+    id: 'morning-1',
+    title: 'Kids Showers',
+    description: 'As necessary',
+    isTimeSensitive: true,
+    assignmentType: 'ALL' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-2',
+    title: 'Get dressed',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'EVERYONE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-3',
+    title: 'Unload Dishwasher',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-4',
+    title: 'Prepare breakfast',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-5',
+    title: 'Clear and set table for breakfast',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-6',
+    title: 'Florence dressed',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-7',
+    title: 'Clear Table (not water cups)',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-8',
+    title: 'Wipe Table, Highchair and Mat',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  {
+    id: 'morning-9',
+    title: 'Sweep Floor/Vacuum',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Morning Tasks'
+  },
+  
+  // Lunch Tasks
+  {
+    id: 'lunch-1',
+    title: 'Prepare lunch',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Lunch Tasks'
+  },
+  {
+    id: 'lunch-2',
+    title: 'Clear and set table for lunch',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Lunch Tasks'
+  },
+  {
+    id: 'lunch-3',
+    title: 'Clear Table (not water cups)',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Lunch Tasks'
+  },
+  {
+    id: 'lunch-4',
+    title: 'Wipe Table, Highchair and Mat',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Lunch Tasks'
+  },
+  
+  // Afternoon tasks
+  {
+    id: 'afternoon-1',
+    title: 'Prepare Afternoon snack',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Afternoon Tasks'
+  },
+  {
+    id: 'afternoon-2',
+    title: 'Bring laundry in, fold and put away',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Afternoon Tasks'
+  },
+  {
+    id: 'afternoon-3',
+    title: 'Unload dishwasher',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Afternoon Tasks'
+  },
+  {
+    id: 'afternoon-4',
+    title: 'Prepare dinner',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Afternoon Tasks'
+  },
+  
+  // After Dinner
+  {
+    id: 'evening-1',
+    title: 'Clear and set table for dinner',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'After Dinner'
+  },
+  {
+    id: 'evening-2',
+    title: 'Clear Table Inc Water Cups',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'After Dinner'
+  },
+  {
+    id: 'evening-3',
+    title: 'Bath Florence',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'After Dinner'
+  },
+  {
+    id: 'evening-4',
+    title: 'Tidy living room',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'EVERYONE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'After Dinner'
+  },
+  {
+    id: 'evening-5',
+    title: 'Kids Teeth & Face wash',
+    description: '',
+    isTimeSensitive: true,
+    assignmentType: 'ALL' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'After Dinner'
+  },
+  
+  // Miscellaneous Tasks
+  {
+    id: 'misc-1',
+    title: 'Hang up towels in bathroom',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'ANYONE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Miscellaneous Tasks'
+  },
+  {
+    id: 'misc-2',
+    title: 'Rinse shower',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'ANYONE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'DAILY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Miscellaneous Tasks'
+  },
+  {
+    id: 'misc-3',
+    title: 'Vaccuum downstairs (upstairs as needed)',
+    description: '',
     isTimeSensitive: false,
     assignmentType: 'SINGLE' as any,
     status: ChoreStatus.ACTIVE,
     frequency: 'WEEKLY' as any,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    isRewardBased: false
+    isRewardBased: false,
+    category: 'Miscellaneous Tasks'
+  },
+  {
+    id: 'misc-4',
+    title: 'Tidy and sweep yard',
+    description: '',
+    isTimeSensitive: false,
+    assignmentType: 'SINGLE' as any,
+    status: ChoreStatus.ACTIVE,
+    frequency: 'WEEKLY' as any,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isRewardBased: false,
+    category: 'Miscellaneous Tasks'
   }
 ];
 
@@ -288,6 +622,145 @@ export async function getChoresWithCapablePersons(): Promise<Chore[]> {
     // return response.data.data;
   } catch (error) {
     console.error('Error fetching chores with capable persons:', error);
+    throw error;
+  }
+}
+
+// Import chores from Chores.md file
+export async function importChoresFromMD(): Promise<Chore[]> {
+  try {
+    console.log('Importing chores from Chores.md');
+    
+    // The chore categories and their tasks from Chores.md
+    const choreCategories = {
+      'Morning Tasks': [
+        'Kids Showers (as necessary)',
+        'Get dressed',
+        'Unload Dishwasher',
+        'Prepare breakfast',
+        'Clear and set table for breakfast',
+        'Florence dressed',
+        'Clear Table (not water cups)',
+        'Wipe Table, Highchair and Mat',
+        'Sweep Floor/Vacuum',
+        'Scrape plates',
+        'Dishes into Dishwasher & Turn on Dishwasher',
+        'Handwash remaining items',
+        'Put away ingredients and leftovers from meal',
+        'Clean Kitchen surfaces, stove and sink',
+        'Dry clothes in dryer',
+        'Hang other clothes to dry'
+      ],
+      'Lunch Tasks': [
+        'Prepare lunch',
+        'Clear and set table for lunch',
+        'Clear Table (not water cups)',
+        'Wipe Table, Highchair and Mat',
+        'Sweep Floor/Vacuum',
+        'Scrape plates',
+        'Dishes into Dishwasher & Turn on Dishwasher',
+        'Handwash remaining items',
+        'Put away ingredients and leftovers from meal',
+        'Clean Kitchen surfaces, stove and sink'
+      ],
+      'Afternoon Tasks': [
+        'Prepare Afternoon snack',
+        'Clear and set table for snack',
+        'Clear Table (not water cups)',
+        'Wipe Table, Highchair and Mat',
+        'Sweep Floor/Vacuum',
+        'Scrape plates',
+        'Dishes into Dishwasher',
+        'Bring laundry in, fold and put away',
+        'Unload dishwasher',
+        'Prepare dinner'
+      ],
+      'After Dinner': [
+        'Clear and set table for dinner',
+        'Clear Table Inc Water Cups',
+        'Wipe Table, Highchair and Mat',
+        'Sweep Floor/Vacuum',
+        'Scrape plates',
+        'Dishes into Dishwasher & Turn on Dishwasher',
+        'Handwash remaining items',
+        'Put away ingredients and leftovers from meal',
+        'Clean Kitchen surfaces, stove and sink',
+        'Bath Florence',
+        'Tidy living room',
+        'Dress for Bed',
+        'Kids Teeth & Face wash',
+        'Kids Showers (as necessary)',
+        'Kids clothes on landing',
+        'Empty bins (as needed)',
+        'Sort dirty laundry',
+        'Iron clothes (as needed)',
+        'Put laundry on to wash',
+        'Set porridge for next day',
+        'Make sandwiches for Lunch',
+        'Check Meal Plan for Dinner time'
+      ],
+      'Miscellaneous Tasks': [
+        'Hang up towels in bathroom',
+        'Rinse shower',
+        'Vaccuum downstairs (upstairs as needed)',
+        'Tidy and sweep yard'
+      ]
+    };
+    
+    // Clear the existing mock chores store
+    mockChoresStore.length = 0;
+    
+    // Create chores from the categories
+    Object.entries(choreCategories).forEach(([category, tasks]) => {
+      tasks.forEach(task => {
+        const now = new Date();
+        const id = `mock-${category.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Default values
+        let isTimeSensitive = false;
+        let frequency = 'DAILY' as any;
+        
+        // Set time sensitivity based on the task
+        if (task.toLowerCase().includes('breakfast') || 
+            task.toLowerCase().includes('lunch') || 
+            task.toLowerCase().includes('dinner') || 
+            task.toLowerCase().includes('snack') || 
+            task.toLowerCase().includes('bath') ||
+            task.toLowerCase().includes('dressed') ||
+            task.toLowerCase().includes('teeth')) {
+          isTimeSensitive = true;
+        }
+        
+        // Set frequency based on the task
+        if (task.toLowerCase().includes('as needed') || 
+            task.toLowerCase().includes('as necessary') || 
+            task.toLowerCase().includes('vacuum downstairs') || 
+            task.toLowerCase().includes('tidy and sweep yard')) {
+          frequency = 'WEEKLY' as any;
+        }
+        
+        const chore: Chore = {
+          id,
+          title: task,
+          description: '',
+          isTimeSensitive,
+          assignmentType: 'ANY' as any,  // Default to ANY
+          status: ChoreStatus.ACTIVE,
+          frequency,     
+          createdAt: now.toISOString(),
+          updatedAt: now.toISOString(),
+          isRewardBased: false,
+          category
+        };
+        
+        mockChoresStore.push(chore);
+      });
+    });
+    
+    console.log(`Imported ${mockChoresStore.length} chores from Chores.md`);
+    return [...mockChoresStore];
+  } catch (error) {
+    console.error('Error importing chores from Chores.md:', error);
     throw error;
   }
 }

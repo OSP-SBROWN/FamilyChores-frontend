@@ -3,11 +3,12 @@ import AppLayout from "../components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
+import { Button } from "../components/ui/button";
 
 // Import chores components
 import ChoresList from "../components/chores/ChoresList";
-import ChoreForm from "../components/chores/ChoreForm";
+import ChoreFormModal from "../components/chores/ChoreFormModal";
 import AssignmentsList from "../components/chores/AssignmentsList";
 import { PersonService } from "../services/people";
 import { TimezoneService } from "../services/timezones";
@@ -22,6 +23,7 @@ import type { Timezone } from "../types/timezone";
 export default function Chores() {
   const [activeTab, setActiveTab] = useState("manage");
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedChore, setSelectedChore] = useState<Chore | null>(null);
   const queryClient = useQueryClient();
   
   // Fetch chores data
@@ -121,9 +123,6 @@ export default function Chores() {
       // Add success notification if you have a notification system
       // toast.success("Chore created successfully");
       
-      // Reset the form by forcing a re-render (you could implement a form reset function)
-      setActiveTab("manage");
-      
       return response; // Return the response for the form component to know it succeeded
     } catch (error) {
       console.error("Error creating chore:", error);
@@ -132,6 +131,7 @@ export default function Chores() {
       throw error; // Re-throw to let the form component know it failed
     } finally {
       setIsCreating(false);
+      setSelectedChore(null); // Clear selected chore if any
     }
   };
 
@@ -157,6 +157,18 @@ export default function Chores() {
     }
   };
 
+  // Group chores by category
+  const choresByCategory: Record<string, Chore[]> = {};
+  if (choresData) {
+    choresData.forEach(chore => {
+      const category = chore.category || "Uncategorized";
+      if (!choresByCategory[category]) {
+        choresByCategory[category] = [];
+      }
+      choresByCategory[category].push(chore);
+    });
+  }
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
@@ -175,53 +187,68 @@ export default function Chores() {
           </TabsList>
           
           <TabsContent value="manage" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <Card className="shadow-md">
-                  <CardHeader>
-                    <CardTitle>Chore List</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {isLoading ? (
-                      <div className="flex justify-center py-8">
-                        <Loader2 className="animate-spin h-8 w-8 text-[#219EBC]" />
-                      </div>
-                    ) : (
-                      <ChoresList 
-                        chores={choresData || []} 
-                        onEdit={(chore: Chore) => {
-                          console.log("Edit chore:", chore);
-                          // We'll implement this later
-                        }}
-                        onDelete={handleDeleteChore}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-              
+            <div className="flex justify-between mb-4">
               <div>
-                <Card className="shadow-md">
-                  <CardHeader>
-                    <CardTitle>Add New Chore</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {isLoading ? (
-                      <div className="flex justify-center py-8">
-                        <Loader2 className="animate-spin h-8 w-8 text-[#219EBC]" />
-                      </div>
-                    ) : (
-                      <ChoreForm 
-                        people={peopleData || []} 
-                        timezones={timezonesData || []}
-                        onSubmit={handleCreateChore}
-                        isSubmitting={isCreating}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
+                {!isLoading && (
+                  <Button 
+                    variant="outline" 
+                    onClick={async () => {
+                      try {
+                        await ChoreService.importChoresFromMD();
+                        queryClient.invalidateQueries({ queryKey: ['chores'] });
+                      } catch (error) {
+                        console.error("Error importing chores:", error);
+                      }
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    Import from Chores.md
+                  </Button>
+                )}
+              </div>
+              <div>
+                {!isLoading && (
+                  <ChoreFormModal
+                    people={peopleData || []}
+                    timezones={timezonesData || []}
+                    onSubmit={handleCreateChore}
+                    isSubmitting={isCreating}
+                    buttonText="Add New Chore"
+                    buttonVariant="default"
+                  />
+                )}
               </div>
             </div>
+            
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle>Chore List</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="animate-spin h-8 w-8 text-[#219EBC]" />
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {Object.entries(choresByCategory).map(([category, chores]) => (
+                      <div key={category} className="space-y-4">
+                        <h3 className="text-lg font-semibold border-b pb-2">{category}</h3>
+                        <ChoresList 
+                          chores={chores} 
+                          onEdit={(chore: Chore) => {
+                            console.log("Edit chore:", chore);
+                            setSelectedChore(chore);
+                            // The edit functionality will be handled by the modal
+                          }}
+                          onDelete={handleDeleteChore}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="assignments">
@@ -259,6 +286,19 @@ export default function Chores() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Edit Chore Modal */}
+        {selectedChore && !isLoading && (
+          <ChoreFormModal
+            people={peopleData || []}
+            timezones={timezonesData || []}
+            onSubmit={handleCreateChore}
+            isSubmitting={isCreating}
+            chore={selectedChore}
+            buttonText="Edit Chore"
+            buttonVariant="ghost"
+          />
+        )}
       </div>
     </AppLayout>
   );

@@ -12,6 +12,7 @@ export interface Chore {
   updatedAt: string;
   isRewardBased: boolean;
   rewardAmount?: number;
+  category?: string;
 }
 
 export interface ChoreAssignment {
@@ -74,6 +75,7 @@ export interface ChoreCreateDto {
   capablePersonIds: string[];
   isRewardBased: boolean;
   rewardAmount?: number;
+  category?: string;
 }
 
 export interface ChoreUpdateDto {
@@ -88,6 +90,7 @@ export interface ChoreUpdateDto {
   capablePersonIds?: string[];
   isRewardBased?: boolean;
   rewardAmount?: number;
+  category?: string;
 }
 
 export interface ChoreAssignmentCreateDto {
