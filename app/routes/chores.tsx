@@ -21,6 +21,7 @@ import type { Timezone } from "../types/timezone";
 
 export default function Chores() {
   const [activeTab, setActiveTab] = useState("manage");
+  const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
   
   // Fetch chores data
@@ -96,10 +97,41 @@ export default function Chores() {
   // Handler functions
   const handleCreateChore = async (data: ChoreCreateDto) => {
     try {
-      await ChoreService.createChore(data);
+      setIsCreating(true);
+      console.log("Creating chore with data:", data);
+      
+      // Ensure all required fields are present and formatted correctly
+      const choreData: ChoreCreateDto = {
+        ...data,
+        // Ensure assignmentType and frequency are properly set as enum values
+        assignmentType: data.assignmentType,
+        frequency: data.frequency,
+        // Make sure we have a valid timezoneId or undefined (not null or empty string)
+        timezoneId: data.isTimeSensitive && data.timezoneId ? data.timezoneId : undefined,
+        // Ensure capablePersonIds is an array
+        capablePersonIds: data.capablePersonIds || []
+      };
+      
+      const response = await ChoreService.createChore(choreData);
+      console.log("Chore created successfully:", response);
+      
+      // Refresh the chores list
       queryClient.invalidateQueries({ queryKey: ['chores'] });
+      
+      // Add success notification if you have a notification system
+      // toast.success("Chore created successfully");
+      
+      // Reset the form by forcing a re-render (you could implement a form reset function)
+      setActiveTab("manage");
+      
+      return response; // Return the response for the form component to know it succeeded
     } catch (error) {
       console.error("Error creating chore:", error);
+      // Add error notification if you have a notification system
+      // toast.error("Failed to create chore");
+      throw error; // Re-throw to let the form component know it failed
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -183,6 +215,7 @@ export default function Chores() {
                         people={peopleData || []} 
                         timezones={timezonesData || []}
                         onSubmit={handleCreateChore}
+                        isSubmitting={isCreating}
                       />
                     )}
                   </CardContent>

@@ -28,23 +28,54 @@ export default function ChoreForm({ people, timezones, onSubmit, isSubmitting = 
   const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
   const [isRewardBased, setIsRewardBased] = useState(false);
   const [rewardAmount, setRewardAmount] = useState<number | undefined>(undefined);
+  const [localIsSubmitting, setLocalIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Reset form function
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setIsTimeSensitive(false);
+    setTimezoneId(undefined);
+    setAssignmentType(ChoreAssignmentType.SINGLE);
+    setFrequency(ChoreFrequency.ONCE);
+    setSelectedPeople([]);
+    setIsRewardBased(false);
+    setRewardAmount(undefined);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const choreData: ChoreCreateDto = {
-      title,
-      description: description || undefined,
-      isTimeSensitive,
-      timezoneId: isTimeSensitive ? timezoneId : undefined,
-      assignmentType,
-      frequency,
-      capablePersonIds: selectedPeople,
-      isRewardBased,
-      rewardAmount: isRewardBased ? rewardAmount : undefined
-    };
+    // Prevent double submission
+    if (localIsSubmitting || isSubmitting) return;
     
-    onSubmit(choreData);
+    try {
+      setLocalIsSubmitting(true);
+      
+      const choreData: ChoreCreateDto = {
+        title,
+        description: description || undefined,
+        isTimeSensitive,
+        timezoneId: isTimeSensitive ? timezoneId : undefined,
+        assignmentType,
+        frequency,
+        capablePersonIds: selectedPeople,
+        isRewardBased,
+        rewardAmount: isRewardBased ? rewardAmount : undefined
+      };
+      
+      console.log("Submitting chore data:", choreData);
+      
+      await onSubmit(choreData);
+      
+      // Reset the form on successful submission
+      resetForm();
+      console.log("Form reset after submission");
+    } catch (error) {
+      console.error("Error in form submission:", error);
+    } finally {
+      setLocalIsSubmitting(false);
+    }
   };
 
   // Helper function to toggle person selection
@@ -194,9 +225,9 @@ export default function ChoreForm({ people, timezones, onSubmit, isSubmitting = 
       <Button 
         type="submit" 
         className="w-full mt-6"
-        disabled={isSubmitting || !title}
+        disabled={isSubmitting || localIsSubmitting || !title}
       >
-        {isSubmitting ? "Saving..." : "Create Chore"}
+        {isSubmitting || localIsSubmitting ? "Saving..." : "Create Chore"}
       </Button>
     </form>
   );
